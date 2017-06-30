@@ -15,5 +15,5 @@
 /log/*
 #!/log/.keep
 /tmp
-./config/secret.rb
+config/secret.rb
 
