@@ -18,7 +18,7 @@ end
 
 
 	def ea_translate(queue_name)
-	  ch = create_channel(AUTH[:host], EA_RABBIT_AUTH[:vhost], EA_RABBIT_AUTH[:port], EA_RABBIT_AUTH[:user], EA_RABBIT_AUTH[:password])
+	  ch = create_channel(EA_RABBIT_AUTH[:host], EA_RABBIT_AUTH[:vhost], EA_RABBIT_AUTH[:port], EA_RABBIT_AUTH[:user], EA_RABBIT_AUTH[:password])
       q = ch.queue(queue_name, durable: true)
       $LOG.info("[*] Waiting for messages on Queue:#{queue_name}. To exit press CTRL+C")
 
@@ -40,7 +40,7 @@ end
 end #class end
 
 
- 5.times do |i|
+ 1.times do |i|
 	  fork do	
 	  	EA_Listener.new.ea_translate("sample_IC")
 	  #EA_Listener.new.full_determination_translator(EA_RABBIT_AUTH[:queue_name])
