@@ -1,21 +1,24 @@
 require "bunny"
+require './config/secret.rb'
 
 module Publish
 
-UAT_AUTH = { host: "xxxxxx", vhost: "/", port: "5672", user: "xxxx", password: "xxxxx", queue_name: "Haven_ICID_RMQ"}
-	def self.arbitrageResp_RMQ(host, vhost, port, user, password, queue_name, message)
-	  conn = Bunny.new(:hostname => host, :vhost => vhost, :port => port, :user => user, :password => password)
-      conn.start
-      channel = conn.create_channel
-      queue    = channel.queue(queue_name, :durable => true)
-      queue.publish(message, :persistant => true)
-      conn.close
-    end
+# Wrong credentials to bunny.new
+	# def self.arbitrageResp_RMQ(host, vhost, port, user, password, queue_name, message)
+	#   conn = Bunny.new(:hostname => HAVEN_RABBIT_AUTH[:host], :vhost => HAVEN_RABBIT_AUTH[:vhost], :port => HAVEN_RABBIT_AUTH[:port], :user => HAVEN_RABBIT_AUTH[:user], :password => HAVEN_RABBIT_AUTH[:password])
+ #      conn.start
+ #      channel = conn.create_channel
+ #      queue    = channel.queue(queue_name, :durable => true)
+ #      queue.publish(message, :persistant => true)
+ #      conn.close
+ #    end
 
 
-    def email_notice(message)
+     def email_notice(notice)
 
-      conn = Bunny.new(:hostname => UAT_AUTH[:host], :vhost => UAT_AUTH[:vhost] , :port => UAT_AUTH[:port], :user => UAT_AUTH[:user], :password => UAT_AUTH[:password])
+      $notice_template = "\nContact Email: desha@washingtondoor.net\n\nQueue: Account Management Team\n\n\nFrom: Kane, Meghan [mailto:MKane@kellyway.com]\nSent:#{Time.now.strftime("%A, %b %d %Y %l:%M %p")}\nTo:HBX,Employer(DCHBX)\nCc:'Tracey Elwood'\n\n"
+      message = $notice_template + notice
+      conn = Bunny.new(:hostname => HAVEN_RABBIT_AUTH[:host], :vhost => HAVEN_RABBIT_AUTH[:vhost] , :port => HAVEN_RABBIT_AUTH[:port], :user => HAVEN_RABBIT_AUTH[:user], :password => HAVEN_RABBIT_AUTH[:password])
       conn.start
       channel = conn.create_channel
 
@@ -23,10 +26,10 @@ UAT_AUTH = { host: "xxxxxx", vhost: "/", port: "5672", user: "xxxx", password: "
       que =  channel.queue("email-out", :auto_delete => false, :durable => true).bind(exch, :routing_key => "#")
 
       exch.publish(message, :routing_key => "venumadhav.dondapati@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
-     # exch.publish(message, :routing_key => "Dan.Northrup3@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
-      #exch.publish(message, :routing_key => "thomas.fahey@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
-      exch.publish(message, :routing_key => "nitishranjan.patil@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
-     # exch.publish(message, :routing_key => "james.butler6@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
+      #exch.publish(message, :routing_key => "Dan.Northrup3@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
+      exch.publish(message, :routing_key => "george.gluck@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
+      #exch.publish(message, :routing_key => "nitishranjan.patil@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
+      #exch.publish(message, :routing_key => "james.butler6@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
       exch.publish(message, :routing_key => "thomas.fahey@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
 
       puts "sent mail"
