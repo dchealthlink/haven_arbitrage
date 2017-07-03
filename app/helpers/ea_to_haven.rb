@@ -6,7 +6,7 @@ $LOG = Logger.new('./log/log_file.log', 'monthly')
 
 
 
-module EA_TRANSLATE_MODULE
+class EA_translate
 
 
 

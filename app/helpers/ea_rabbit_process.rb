@@ -1,11 +1,11 @@
 require "bunny"
 require './config/secret.rb'
 require "./app/helpers/ea_to_haven.rb"
-
+require "./app/helpers/ea_to_haven.rb"
 
 class EA_Listener
 
-  include EA_TRANSLATE_MODULE
+  #include EA_TRANSLATE_MODULE
 
 
 def create_channel(host, vhost, port, user, password)#, queue_name)
@@ -23,12 +23,12 @@ end
       $LOG.info("[*] Waiting for messages on Queue:#{queue_name}. To exit press CTRL+C")
 
 	begin
-	  q.subscribe(:manual_ack => true, :block => true) do |delivery_info, properties, body|
+	  q.subscribe(:manual_ack => false, :block => true) do |delivery_info, properties, body|
 	  	$LOG.info("Received: delivery_info:  #{delivery_info}\nproperties:  #{properties}\nbody:  #{body}\n")
-	    translate_ea_to_haven(body.to_s)
+	    EA_translate.new.translate_ea_to_haven(body.to_s)
 	    end
-	    ch.ack(delivery_info.delivery_tag)
-	    $LOG.info("[x] Done with full_determination_translator")
+	    #ch.ack(delivery_info.delivery_tag)
+	    $LOG.info("[x] Done with EA to Haven translation")
 	rescue Interrupt => _
 	  #conn.close
 	end	
@@ -40,13 +40,13 @@ end
 end #class end
 
 
- 1.times do |i|
-	  fork do	
-	  	EA_Listener.new.ea_translate("sample_IC")
+ # 1.times do |i|
+	#   fork do	
+	  	EA_Listener.new.ea_translate("EA_Payload_RMQ")
 	  #EA_Listener.new.full_determination_translator(EA_RABBIT_AUTH[:queue_name])
-	  end
-	  end
-	  Process.waitall
+	  # end
+	  # end
+	  # Process.waitall
 
 
  # 5.times do |i|
