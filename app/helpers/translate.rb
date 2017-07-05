@@ -3,7 +3,7 @@ require './config/secret.rb'
 require "./app/helpers/publish"
 require "./app/helpers/EA_Response_builder"
 require "./app/helpers/curam_to_havendb"
-require "./app/helpers/web_services"
+require "./app/helpers/curam_esb_call.rb"
 
 
 class Listener
@@ -11,7 +11,7 @@ class Listener
 # files = Dir["#{File.dirname(__FILE__)}/*.rb"]
 # files.delete("app/helpers/translate.rb")
 # files.each {|file| require "./#{file}" }
-  include Web_Services
+  include Curam_ESB_Service
   include Publish
   include Store
   include EA_Response_builder
@@ -37,7 +37,7 @@ end
 	  q.subscribe(:manual_ack => true, :block => true) do |delivery_info, properties, body|
 	  	$LOG.info("Received: delivery_info:  #{delivery_info}\nproperties:  #{properties}\nbody:  #{body}\n")
 	    ic = body.scan(/\b\d{7}\b/)[0]
-	    curam_response = Web_Services.curam(ic).to_xml
+	    curam_response = Curam_ESB_Service.call(ic)
 	    $LOG.info("Curam response for #{ic}:\n #{curam_response.inspect}")
 	    complete = store_to_haven_db(curam_response)
 	    consistent = curam_inconsistent_app_check(curam_response)
