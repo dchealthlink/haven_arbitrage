@@ -25,12 +25,12 @@ module Publish
       exch = channel.topic("X", :auto_delete => false)
       que =  channel.queue(RABBIT_QUEUES[:email], :auto_delete => false, :durable => true).bind(exch, :routing_key => "#")
 
-      exch.publish(message, :routing_key => "venumadhav.dondapati@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
+      #exch.publish(message, :routing_key => "venumadhav.dondapati@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
       #exch.publish(message, :routing_key => "Dan.Northrup3@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
-      exch.publish(message, :routing_key => "george.gluck@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
+      #exch.publish(message, :routing_key => "george.gluck@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
       #exch.publish(message, :routing_key => "nitishranjan.patil@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
       #exch.publish(message, :routing_key => "james.butler6@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
-      exch.publish(message, :routing_key => "thomas.fahey@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
+      #exch.publish(message, :routing_key => "thomas.fahey@dc.gov",  :content_type => "text/plain", :headers => {"Subject" => "Arbitrage: Incomplete/Inconsistent Curam response"})
 
       puts "sent mail"
       conn.close
