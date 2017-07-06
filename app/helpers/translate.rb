@@ -80,7 +80,7 @@ end
 
  1.times do |i|
 	  fork do	
-	  Listener.new.full_determination_translator("sample_IC")
+	  Listener.new.full_determination_translator(RABBIT_QUEUES[:curam_ic])
 	  end
 	  end
 	  Process.waitall
