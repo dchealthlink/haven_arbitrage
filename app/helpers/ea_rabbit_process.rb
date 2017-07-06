@@ -42,7 +42,7 @@ end #class end
 
  # 1.times do |i|
 	#   fork do	
-	  	EA_Listener.new.ea_translate("EA_Payload_RMQ")
+	  	EA_Listener.new.ea_translate(RABBIT_QUEUES[:ea_payload])
 	  #EA_Listener.new.full_determination_translator(EA_RABBIT_AUTH[:queue_name])
 	  # end
 	  # end
