@@ -1,4 +1,5 @@
 # Using Savon version 1
+gem 'savon', '=1.2.0'
 require 'savon'
 #require 'rest-client'
 #require 'nokogiri'

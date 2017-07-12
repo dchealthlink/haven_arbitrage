@@ -218,7 +218,6 @@ end
 
 
 def data_block(application_xlate, st, tt, records, ic)
-
 arr = application_xlate.select do |value|
   value[:sourcein] == "curam" && value[:targetout] == "haven" && value[:targettype] == tt
 end
@@ -238,8 +237,9 @@ end
 
 def xml_search(records, field)
 begin
-records.search(field).first.text.to_s 
-#puts "XML search: #{records.search(field).first}"
+records.search(field).children.first.text.to_s 
+#puts "XML search for #{field}: #{records.search(field).text}"
+#records.search(field).text.to_s 
 rescue
   $LOG.info("%%%%%%%%%% Unable to find the value for #{field} in curam xml%%%%%%%%%%%")
   return ""
@@ -411,13 +411,17 @@ curam_response.xpath("//product_delivery_case").each do |pdc|
 
 pdc_data = data_block(@application_xlate, "pdc", "application_pdc_in", pdc, @integrated_case_reference).merge!("icid" => $icid)
 
-       curam_response.xpath("//allocated_aptc").each do |aptc|
-         if aptc.search("aptc_amount").text != ""
+# APTC Extraction
+          aptc = curam_response.search("aptc_amount")
           aptc_data = data_block(@application_xlate, "pdc", "application_pdc_in", aptc, @integrated_case_reference)
           pdc_data.merge!(aptc_data)
-         end
-           break if "#{aptc.search("aptc_amount").text}" != ""
-       end
+       
+
+# CSR Extraction
+          csr = curam_response.search("csr")
+          csr_data = data_block(@application_xlate, "pdc", "application_pdc_in", csr, @integrated_case_reference)
+          pdc_data.merge!(csr_data)
+      
 
 
   application_pdc_in_payload = {
