@@ -332,6 +332,8 @@ end
 #**************************************************************************************#
 
 
+
+
 #*********************************Relationships*****************************
 applicant.search("relationship").each do |relationship|
 
@@ -411,6 +413,7 @@ curam_response.xpath("//product_delivery_case").each do |pdc|
 
 pdc_data = data_block(@application_xlate, "pdc", "application_pdc_in", pdc, @integrated_case_reference).merge!("icid" => $icid)
 
+if pdc.search("pdc_product_type_description").children.text == "Insurance Assistance"
 # APTC Extraction
           aptc = curam_response.search("aptc_amount")
           aptc_data = data_block(@application_xlate, "pdc", "application_pdc_in", aptc, @integrated_case_reference)
@@ -422,6 +425,7 @@ pdc_data = data_block(@application_xlate, "pdc", "application_pdc_in", pdc, @int
           csr_data = data_block(@application_xlate, "pdc", "application_pdc_in", csr, @integrated_case_reference)
           pdc_data.merge!(csr_data)
       
+end
 
 
   application_pdc_in_payload = {
