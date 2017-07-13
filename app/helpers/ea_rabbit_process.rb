@@ -22,12 +22,13 @@ end
       $LOG.info("[*] Waiting for messages on Queue:#{queue_name}. To exit press CTRL+C")
 
 	begin
-	  q.subscribe(:manual_ack => false, :block => true) do |delivery_info, properties, body|
+	  q.subscribe(:manual_ack => true, :block => true) do |delivery_info, properties, body|
 	  	$LOG.info("Received: delivery_info:  #{delivery_info}\nproperties:  #{properties}\nbody:  #{body}\n")
 	    EA_translate.new.translate_ea_to_haven(body.to_s)
+	    ch.ack(delivery_info.delivery_tag)
+	    $LOG.info("[x] Finished with EA to Haven translation")
 	    end
-	    #ch.ack(delivery_info.delivery_tag)
-	    $LOG.info("[x] Done with EA to Haven translation")
+	    
 	rescue Interrupt => _
 	  #conn.close
 	end	
