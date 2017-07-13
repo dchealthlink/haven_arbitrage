@@ -23,9 +23,9 @@ end
 	  q.subscribe(:manual_ack => true, :block => true) do |delivery_info, properties, body|
 	  	$LOG.info("Received: delivery_info:  #{delivery_info}\nproperties:  #{properties}\nbody:  #{body}\n")
 	    EA_translate.new.translate_ea_to_haven(body.to_s)
-	    end
 	    ch.ack(delivery_info.delivery_tag)
 	    $LOG.info("[x] Done with Mobile to Haven translation\n\n******Come on...! I would expect some claps....Thank you *******")
+	    end
 	rescue Interrupt => _
 	  #conn.close
 	end	
