@@ -45,55 +45,23 @@ end
 
 	    	puts "***********************Hurray validations success******************************"
 	    EA_Response_builder.call_haven(curam_response)
-	    #Publish.arbitrageResp_RMQ(AUTH[:host], AUTH[:vhost], AUTH[:port], AUTH[:user], AUTH[:password], "HavenICPayload_Request_RMQ", EA_Response_builder.call_haven(curam_response))
 	    end
 	    ch.ack(delivery_info.delivery_tag)
-	    $LOG.info("[x] Done with full_determination_translator")
+	    $LOG.info("[x] Finshed with Curam XML translation")
 	    end
 	rescue Interrupt => _
 	  #conn.close
 	end	
 	end
-	
-
-#I think we don't need this method	
- #   def pre_determination_translator(queue_name)
-	#   ch = create_channel(AUTH[:host], AUTH[:vhost], AUTH[:port], AUTH[:user], AUTH[:password])
- #      q = ch.queue(queue_name, durable: true)
- #      $LOG.info("[*] Waiting for messages. To exit press CTRL+C")
-
-	# begin
-	#   q.subscribe(:manual_ack => true, :block => true) do |delivery_info, properties, body|
-	#     $LOG.info("Received: delivery_info:  #{delivery_info}\nproperties:  #{properties}\nbody:  #{body}\n")
-	#     Publish.arbitrageResp_RMQ(AUTH[:host], AUTH[:vhost], AUTH[:port], AUTH[:user], AUTH[:password], "HavenICPayload_Request_RMQ", EA_Response_builder.build_response(body))
-	#     $LOG.info("[x] Done with pre_determination_translator")
-	#     ch.ack(delivery_info.delivery_tag)
-	#     end
-	# rescue Interrupt => _
-	#   #conn.close
-	# end	
-	# end
 
 
 end
 
 
- 1.times do |i|
-	  fork do	
-	  Listener.new.full_determination_translator(RABBIT_QUEUES[:curam_ic])
-	  end
-	  end
-	  Process.waitall
-
-
- # 5.times do |i|
+ # 1.times do |i|
 	#   fork do	
-	#   Listener.new.pre_determination_translator("Haven_EligibilityResp_RMQ")
-	#   end
-	#   end
-	#   Process.waitall
-
-
- 
-#Listener.new.listen(AUTH[:host], AUTH[:vhost], AUTH[:port], AUTH[:user], AUTH[:password], AUTH[:queue_name])
+	  Listener.new.full_determination_translator(RABBIT_QUEUES[:curam_ic])
+	  # end
+	  # end
+	  # Process.waitall
 
