@@ -1,23 +1,38 @@
-# Using Savon version 1
-gem 'savon', '=1.2.0'
+# Using Savon version 2
+gem 'savon', '=2.11.1'
 require 'savon'
-#require 'rest-client'
-#require 'nokogiri'
+require 'nokogiri'
 require './config/secret.rb'
+
+$LOG = Logger.new('./log/curam.log', 'monthly')
+
 
 module Curam_ESB_Service
 
 def self.call(ic)
 
-client = Savon.client do
-			wsdl.document = CURAM_ESB_SOAP[:wsdl_url]
-			wsse.credentials CURAM_ESB_SOAP[:username], CURAM_ESB_SOAP[:password]
-		 end
+savon_config = {
+  :wsdl => CURAM_ESB_SOAP[:wsdl_url],
+ # :ssl_verify_mode => :none,
+  :ssl_version => :TLSv1,
+  :namespaces => ESB_SERVICE_NAMESPACE,
+  :log => true,
+  :logger => $LOG,
+  :wsse_auth => CURAM_ESB_SOAP[:usercredentials]
+#   ssl_cert_file: "/home/arbitrage/esb_certs/esb_root.pem",
+#   ssl_cert_key_file: "/home/arbitrage/esb_certs/esb_key.pem",
+#   ssl_ca_cert_file: "/home/arbitrage/esb_certs/esb_ca.pem"
+}
 
-client.http.auth.ssl.verify_mode = :none
+client = Savon.client(savon_config)
 #The name space is changing boy be careful ex: ns1 , v1, WL5G3N3
-response = client.request(:WL5G3N3, :process, body: { "WL5G3N3:ICIDParameters" => { "WL5G3N3:IntegratedCasereference_ID" => "#{ic.to_s}" } })
-response.to_xml
+message = { "WL5G3N3:ICIDParameters" => { "WL5G3N3:IntegratedCasereference_ID" => "#{ic.to_s}" } }
+
+response = client.call(:process, message: message)
+
+$LOG.info("XML recieved from curam for IC:#{ic}\n#{Nokogiri::XML(response.xml.to_s).to_xml}")
+
+response.xml
 end	
 
 
@@ -30,6 +45,7 @@ end
 # end
 
 end
+
 
 
 
