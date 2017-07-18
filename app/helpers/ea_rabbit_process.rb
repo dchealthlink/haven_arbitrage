@@ -24,7 +24,8 @@ end
 	begin
 	  q.subscribe(:manual_ack => true, :block => true) do |delivery_info, properties, body|
 	  	$LOG.info("Received: delivery_info:  #{delivery_info}\nproperties:  #{properties}\nbody:  #{body}\n")
-	    EA_translate.new.translate_ea_to_haven(body.to_s)
+	    #EA_translate.new.translate_ea_to_haven(body.to_s)
+	    EA_translate.new.to_haven(body.to_s)
 	    ch.ack(delivery_info.delivery_tag)
 	    $LOG.info("[x] Finished with EA to Haven translation")
 	    end
