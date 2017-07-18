@@ -89,6 +89,12 @@ unless file_input_wrapper_response.body.include?("Error description:")
 	$LOG.info("***********************\n\n#{finapp_system_wrapper_response.body}\n**********************\n\n")
 end	
 
+end # ea_payload_post method end
+
+
+def to_haven(rabbitmq_message)
+payload_hash = translate_ea_to_haven(rabbitmq_message)
+ea_payload_post(payload_hash[:payload], payload_hash[:faa_id])
 end
 
 
@@ -98,7 +104,7 @@ def strip_tag_value(value)
 	else
 		stripped_value = value
 	end
-end
+end   # strip_tag_value methods end
 
 
 
@@ -495,7 +501,10 @@ end
 
 $LOG.info("***********************\n\npayload:\n #{@post_payload}\n**********************\n\n")
 
-ea_payload_post(@post_payload, @faa_id)
+translated_hash = {}
+translated_hash[:payload] = @post_payload
+translated_hash[:faa_id]  = @faa_id
+translated_hash
 
 end # translate_ea_to_haven method end
 
