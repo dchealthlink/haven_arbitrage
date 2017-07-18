@@ -23,7 +23,8 @@ puts "#{sourcetype.inspect}"
 	end
  
 puts "The source type:#{sourcetype.join(".")}\nThe source field:#{sourcefield}"
-record = @xlate.where(["sourcetype=? and sourcefield=? and status=?", "#{sourcetype.join(".")}", "#{sourcefield}", "A"])
+#record = @xlate.where(["sourcetype=? and sourcefield=? and status=?", "#{sourcetype.join(".")}", "#{sourcefield}", "A"])
+record = @xlate.select {|rec| (rec.sourcetype == "#{sourcetype.join(".")}" and rec.sourcefield == "#{sourcefield}")}
 
 	unless record.empty?
 	puts "The record: #{record.inspect}"
@@ -34,7 +35,8 @@ record = @xlate.where(["sourcetype=? and sourcefield=? and status=?", "#{sourcet
 			puts "Source value from siflag Y:#{@sv}"
 
 		elsif record.first.siflag == "N"
-			rec = @xlate.where(["sourcetype=? and sourcefield=? and sourcevalue=?", "#{sourcetype.join(".")}", "#{sourcefield}", "#{strip_tag_value(faa.content)}"])
+			#rec = @xlate.where(["sourcetype=? and sourcefield=? and sourcevalue=?", "#{sourcetype.join(".")}", "#{sourcefield}", "#{strip_tag_value(faa.content)}"])
+			rec = @xlate.select {|rec| (rec.sourcetype == "#{sourcetype.join(".")}" and rec.sourcefield == "#{sourcefield}" and rec.sourcevalue == "#{strip_tag_value(faa.content)}")}
 			rec_group = rec.group_by(&:targetfield)
 
 			rec_group.keys.each do |key|
@@ -114,7 +116,8 @@ def translate_ea_to_haven(ea_xml_string)
 
 @ea_xml = Nokogiri::XML(ea_xml_string)
 
-@xlate = Application_xlate.where(["sourcein=? and targetout=?", "ea", "haven"])
+#@xlate = Application_xlate.where(["sourcein=? and targetout=?", "ea", "haven"])
+@xlate = Application_xlate.where(["sourcein=? and targetout=? and status=?", "ea", "haven", "A"]).to_a
 
 arr = []
 @tablename_array = []
@@ -141,6 +144,13 @@ if faa.name == "benchmark_plan"
 		bm.element_children.each do |bm_carrier|
 			x = bm_carrier.path
 			process(bm_carrier, x, @xlate, arr, faa_id, @person_id, @bm_id, nil, nil)
+
+			if bm_carrier.name == "id"
+				bm_carrier.element_children.each do |bm_carrier_id|
+				x = bm_carrier_id.path
+				process(bm_carrier_id, x, @xlate, arr, faa_id, @person_id, @bm_id, nil, nil)
+				end
+			end
 		end
 	end
 
