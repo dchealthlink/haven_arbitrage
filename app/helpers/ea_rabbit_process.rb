@@ -1,6 +1,8 @@
 require "bunny"
 require './config/secret.rb'
 require "./app/helpers/ea_to_haven.rb"
+require "./app/validations/xml_validator.rb"
+require "./app/notifications/slack_notifier.rb"
 
 class EA_Listener
 
@@ -24,11 +26,17 @@ end
 	begin
 	  q.subscribe(:manual_ack => true, :block => true) do |delivery_info, properties, body|
 	  	$LOG.info("Received: delivery_info:  #{delivery_info}\nproperties:  #{properties}\nbody:  #{body}\n")
-	    #EA_translate.new.translate_ea_to_haven(body.to_s)
-	    EA_translate.new.to_haven(body.to_s)
+	    validator = Validate_XML.new(body)
+	   	if validator.check_syntax_error.any?
+	   		Slack_it.new.bad_ea_intake(body, validator.get_syntax_error_message)
+	   		#publish to queue pending
+	   	else
+	   		Slack_it.new.good_ea_intake(body)
+	    EA_translate.new.to_haven(body)
 	    ch.ack(delivery_info.delivery_tag)
 	    $LOG.info("[x] Finished with EA to Haven translation")
-	    end
+		end	
+	  end
 	    
 	rescue Interrupt => _
 	  #conn.close
