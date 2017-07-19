@@ -10,6 +10,7 @@ gem 'savon', '~> 1.0'
 gem 'rake'
 gem "sinatra-activerecord"
 gem 'mysql2', '~> 0.4.5'
+gem "slack-notifier"
 #gem 'composite_primary_keys', '~> 9.0', '>= 9.0.6'
 #gem 'activerecord', '3.2.13'
 
