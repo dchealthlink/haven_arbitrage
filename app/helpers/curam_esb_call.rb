@@ -13,7 +13,7 @@ def self.call(ic)
 
 savon_config = {
   :wsdl => CURAM_ESB_SOAP[:wsdl_url],
- # :ssl_verify_mode => :none,
+  :ssl_verify_mode => :none,
   :ssl_version => :TLSv1,
   :namespaces => ESB_SERVICE_NAMESPACE,
   :log => true,
