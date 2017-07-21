@@ -16,6 +16,12 @@ end
 def get_finapp(ea_xml)
 xml = Nokogiri::XML(ea_xml)
 faa_id = xml.at("//financial_assistance_application/id/id").content
+# The following if condition is just for an extra caution to just get the Finadd ID instead of any extra data
+	if faa_id.include?("\n")
+		return faa_id.split(/\n/).first
+	else
+		return faa_id
+	end
 end
 
 

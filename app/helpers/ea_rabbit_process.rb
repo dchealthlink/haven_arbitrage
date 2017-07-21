@@ -3,14 +3,18 @@ require './config/secret.rb'
 require "./app/helpers/ea_to_haven.rb"
 require "./app/validations/xml_validator.rb"
 require "./app/notifications/slack_notifier.rb"
+require "./app/helpers/publish_to_ea.rb"
 
 class EA_Listener < BaseListener
 
 	def validate_and_notify(body)
 		validator = Validate_XML.new(body)
 		if validator.check_syntax_error.any?
-	   		Slack_it.new.bad_ea_intake(body, validator.get_syntax_error_message)
-	   		#publish to queue pending
+	   		error_message = validator.get_syntax_error_message
+	   		Slack_it.new.bad_ea_intake(body, error_message)
+	   		
+	   		#publish to EA queue on error payload
+	   		Publish_EA.new(properties).error_intake_status(error_message)
 	   	else
 	   		Slack_it.new.good_ea_intake(body)
 	end
