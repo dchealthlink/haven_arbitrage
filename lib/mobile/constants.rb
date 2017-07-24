@@ -25,5 +25,6 @@ TABLENAMES = {
   TaxHousehold:             "finapp_tax_in",
   ApplicationRelationship:  "finapp_relationship_in",
   Phone:                    "finapp_person_phone_in",
-  Email:                    "finapp_person_email_in"
+  Email:                    "finapp_person_email_in",
+  Document:                 "finapp_person_document_in" 
 }    

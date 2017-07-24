@@ -116,6 +116,11 @@
           "startdate": "2017-01-01"
         }
       ],
+      "Document": [
+        {
+          "has_document_cert_of_citizenship": "Y"
+        }
+      ],
       "eapersonid": "TIMESTAMP040002",
       "iscoverageapplicant": "Y",
       "personfirstname": "Tina",
@@ -132,14 +137,12 @@
       "islast3pregnant": "N",
       "isformerfoster": "N",
       "isuscitizen": "N",
-      "lawfullypresent": "Y",
-      "documenttype": "certOfCitDocumentID",
       "alienNumber": "3333333",
-      "citizenshipNumber": "7777777",
+      "citizenNumber": "7777777",
       "isinsured": "N",
       "isotherclaimed": "N",
       "istaxrequired": "Y",
-      "citizen_status": "US"
+      "citizen_status": "LP"
     },
     {
       "Address": [
