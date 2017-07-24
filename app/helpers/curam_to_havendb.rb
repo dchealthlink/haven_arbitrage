@@ -118,19 +118,48 @@ payload = {
 "action" => "INSERT", 
 "Location" => "external_log", 
 "xaid" => "value", 
-"Data" => [ "keyindex" => "integrated_case_reference",
-            "keyvalue" => $curam_xml.xpath("//integrated_case_reference").text,
-            "keytype" => "Notification",
-            "keyresultid" => $icid,
-            "status" => "Success",
-            "keytimestamp" => Time.now,
-            "payload" => $curam_raw_xml,
-            "queuename" => "email-out",
-            "apprefnum" => $curam_xml.xpath("//AppCaseRef").text.to_s,
-            "requesttype" => "Sent" ]}
+"keyindex" => "integrated_case_reference",
+"keyvalue" => $curam_xml.xpath("//integrated_case_reference").text,
+"keytype" => "Notification",
+"keyresultid" => $icid,
+"status" => "Success",
+"keytimestamp" => Time.now,
+"queuename" => "email-out",
+"apprefnum" => $curam_xml.xpath("//AppCaseRef").text.to_s,
+"requesttype" => "Sent",
+"Data" => [ "payload" => $curam_raw_xml ]
 
-puts "validation log: #{payload.inspect}"
-application_in_res = RestClient.post('newsafehaven.dcmic.org/arb_input_wrapper.php', payload, {content_type: :"application/xml", accept: :"application/json"})
+}
+
+puts "validation log: #{payload.to_s.gsub("=>", ":")}"
+application_in_res = RestClient.post('newsafehaven.dcmic.org/arb_input_wrapper.php', payload.to_s.gsub("=>", ":"), {content_type: :"application/xml", accept: :"application/json"})
+application_in_res.body
+end
+
+
+def log_curam_intake
+
+payload = {
+
+"action" => "INSERT", 
+"Location" => "external_log", 
+"xaid" => "value", 
+"keyindex" => "integrated_case_reference",
+"keyvalue" => $curam_xml.xpath("//integrated_case_reference").text,
+"keytype" => "Curam",
+"keyresultid" => $icid != nil ? $icid : "",
+"status" => "Success",
+"keytimestamp" => Time.now.to_s,
+"queuename" => "Haven_ICID_RMQ",
+"apprefnum" => $curam_xml.xpath("//AppCaseRef").text.to_s,
+"requesttype" => "Sent",
+"xmlpayload" => "#{$curam_raw_xml}"
+
+}
+
+puts "Log Curam Intake: #{payload.to_s.gsub("=>", ":")}\n\n"
+application_in_res = RestClient.post('newsafehaven.dcmic.org/external_log_test.php', payload.to_s.gsub("=>", ":"), {content_type: :"application/json", accept: :"application/json"})
+puts "Log curam response body: #{application_in_res.body}"
 application_in_res.body
 end
 
@@ -259,6 +288,7 @@ $tax_no = 1
  @integrated_case_reference = curam_response.xpath("//integrated_case_reference").text.to_s
  $integrated_case_reference = curam_response.xpath("//integrated_case_reference").text.to_s
 
+log_curam_intake
 #**************************************************************#
 application_in_payload = {
 
