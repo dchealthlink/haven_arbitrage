@@ -5,6 +5,7 @@ require "./app/helpers/publish"
 require "./app/helpers/EA_Response_builder"
 require "./app/helpers/curam_to_havendb"
 require "./app/helpers/curam_esb_call.rb"
+require "./app/validations/xml_validator.rb"
 
 
 class Listener
@@ -29,7 +30,7 @@ end
 	def full_determination_translator(queue_name)
 	  ch = create_channel(HAVEN_RABBIT_AUTH[:host], HAVEN_RABBIT_AUTH[:vhost], HAVEN_RABBIT_AUTH[:port], HAVEN_RABBIT_AUTH[:user], HAVEN_RABBIT_AUTH[:password])
       q = ch.queue(queue_name, durable: true)
-      $LOG.info("[*] Waiting for messages. To exit press CTRL+C")
+      $LOG.info("[*] Waiting for messages. on Queue: #{queue_name} To exit press CTRL+C")
 
 	begin
 	  q.subscribe(:manual_ack => true, :block => true) do |delivery_info, properties, body|
@@ -37,7 +38,12 @@ end
 	    ic_payload_hash = parse_queue_message(body.to_s)
 	    ic = ic_payload_hash[:ic]
 	    curam_response = Curam_ESB_Service.call(ic)
-	    $LOG.info("Curam response for #{ic}:\n #{curam_response.inspect}")
+	    validator = Validate_XML.new(curam_response)
+	    if validator.check_syntax_error.any?
+	   		error_message = validator.get_syntax_error_message
+	   		#todo where to notify if invalid xml recieved
+	   		puts "Invalid curam xml recieved and can't process. Syntax errors found: #{error_message}"
+	   	else
 	    complete = store_to_haven_db(curam_response)
 	    consistent = curam_inconsistent_app_check(curam_response)
 	    if ( complete && consistent )
@@ -48,6 +54,7 @@ end
 	    ch.ack(delivery_info.delivery_tag)
 	    $LOG.info("[x] Finshed with Curam XML translation")
 	    end
+	   end
 	rescue Interrupt => _
 	  #conn.close
 	end	
