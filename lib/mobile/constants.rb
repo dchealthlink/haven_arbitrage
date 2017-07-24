@@ -10,7 +10,7 @@ KEY_SETTERS = {
         :'@finapp_id' =>   ["eaid"],
         :'@personid'  =>   ["eapersonid"],
         :'@id'        =>   ["insuranceid", "incomeid", "tax_no", "cross_personid"],
-        :'@type'      =>   ["addresstype", "insurancetype", "incometype", "  emailtype" , "numbertype"]
+        :'@type'      =>   ["addresstype", "insurancetype", "incometype", "emailtype" , "numbertype"]
     }
 
 # This is a table of mappings from mobile input JSON elements

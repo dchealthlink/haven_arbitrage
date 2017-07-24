@@ -14,8 +14,8 @@ class KeyHolder < Base
   def read(entity)
     self.clone.tap do |o|
       KEY_SETTERS.each do |key, fields|
-        fields.each do |f|   
-          o.instance_variable_set(key, entity[f]) if entity[f]
+        fields.each do |f|  
+          o.instance_variable_set(key, entity.delete(f)) if entity[f]
         end
       end
     end

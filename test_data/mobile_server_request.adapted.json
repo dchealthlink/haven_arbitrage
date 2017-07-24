@@ -1,15 +1,12 @@
 {
-  "eaid": "876544930278011",
+  "eaid": "TIMESTAMP0001",
   "statecd": "DC",
   "appyear": "2017",
-  "name": "SAMPLE-HAVEN-APPLICATION",
   "status": "Pending",
   "applicanttype": "user and-or family",
   "motivationtype": "MT26301",
-  "applicationsource": "electronic",
-  "determinationtype": "mobile-internal",
+  "reqtype": "mobile-internal",
   "medicaidauth": "Y",
-  "medicaiddhsreviewauth": "Y",
   "renewalauth": "Y",
   "submitauth": "Y",
   "Person": [
@@ -42,13 +39,13 @@
       ],
       "Insurance": [
         {
-          "insuranceid": "7823232",
+          "insuranceid": "TIMESTAMP010001",
           "insurancetype": "peco",
           "startdate": "2017-01-01",
           "enddate": "2017-12-31"
         },
         {
-          "insuranceid": "7823233",
+          "insuranceid": "TIMESTAMP010002",
           "insurancetype": "esi",
           "startdate": "2018-01-01",
           "enddate": "2018-12-31"
@@ -56,7 +53,7 @@
       ],
       "Income": [
         {
-          "incomeid": "8000001",
+          "incomeid": "TIMESTAMP030001",
           "incometype": "wages",
           "paymentfrequency": "1",
           "incomeamount": "50000"
@@ -64,24 +61,22 @@
       ],
       "Deduction": [
         {
-          "incomeid": "8000002",
+          "incomeid": "TIMESTAMP030002",
           "incometype": "selfEmployInsDeductions",
           "incomeamount": "500"
         }
       ],
-      "eapersonid": "849588384759",
-      "isapplicant": "Y",
+      "eapersonid": "TIMESTAMP040001",
+      "iscoverageapplicant": "Y",
       "personfirstname": "Tim",
       "personlastname": "Jones",
       "persondob": "1975-01-01",
-      "isssntrue": "Y",
-      "personssn": "197501010",
+      "personssn": "TIMESTAMP0",
       "gender": "M",
       "preferredcontactmethod": "Email",
       "preferredlanguage": "English",
       "isdisabled": "N",
       "isstudent": "N",
-      "ismedicareentitled": "N",
       "isincarcerated": "N",
       "isstateresident": "Y",
       "islast3pregnant": "N",
@@ -106,30 +101,32 @@
       ],
       "Insurance": [
         {
+          "insuranceid": "TIMESTAMP010003",
           "insurancetype": "peco",
           "startdate": "2017-01-01",
           "enddate": "2017-12-31"
-        },
+        }
+      ],
+      "Income": [
         {
+          "incomeid": "TIMESTAMP030003",
           "incometype": "wages",
           "paymentfrequency": "12",
           "incomeamount": "1500",
           "startdate": "2017-01-01"
         }
       ],
-      "eapersonid": "849588389839",
-      "isapplicant": "Y",
+      "eapersonid": "TIMESTAMP040002",
+      "iscoverageapplicant": "Y",
       "personfirstname": "Tina",
       "personlastname": "Jones",
       "persondob": "1979-01-01",
-      "isssntrue": "Y",
-      "personssn": "197901010",
+      "personssn": "TIMESTAMP1",
       "gender": "M",
       "preferredcontactmethod": "Email",
       "preferredlanguage": "English",
       "isdisabled": "N",
       "isstudent": "N",
-      "ismedicareentitled": "N",
       "isincarcerated": "N",
       "isstateresident": "Y",
       "islast3pregnant": "N",
@@ -158,25 +155,23 @@
       ],
       "Income": [
         {
-          "incomeid": "34354353",
+          "incomeid": "TIMESTAMP030004",
           "incometype": "wages",
           "paymentfrequency": "1",
           "incomeamount": "2000"
         }
       ],
-      "eapersonid": "935588389839",
-      "isapplicant": "Y",
+      "eapersonid": "TIMESTAMP040003",
+      "iscoverageapplicant": "Y",
       "personfirstname": "James",
       "personlastname": "Jones",
       "persondob": "2000-01-01",
-      "isssntrue": "Y",
-      "personssn": "200001010",
+      "personssn": "TIMESTAMP2",
       "gender": "M",
       "preferredcontactmethod": "Email",
       "preferredlanguage": "English",
       "isdisabled": "N",
       "isstudent": "N",
-      "ismedicareentitled": "N",
       "isincarcerated": "N",
       "isstateresident": "Y",
       "islast3pregnant": "N",
@@ -191,35 +186,35 @@
   "TaxHousehold": [
     {
       "tax_no": "1",
-      "eapersonid": "849588384759",
-      "filer_type": "Filers"
+      "eapersonid": "TIMESTAMP040001",
+      "filertype": "Filers"
     },
     {
       "tax_no": "1",
-      "eapersonid": "849588389839",
-      "filer_type": "Filers"
+      "eapersonid": "TIMESTAMP040002",
+      "filertype": "Filers"
     },
     {
       "tax_no": "1",
-      "eapersonid": "935588389839",
-      "filer_type": "Dependents"
+      "eapersonid": "TIMESTAMP040003",
+      "filertype": "Dependents"
     }
   ],
   "ApplicationRelationship": [
     {
-      "eapersonid": "849588384759",
+      "eapersonid": "TIMESTAMP040001",
       "relationship": "Spouse",
-      "cross_eapersonid": "849588389839"
+      "cross_eapersonid": "TIMESTAMP040002"
     },
     {
-      "eapersonid": "849588384759",
+      "eapersonid": "TIMESTAMP040001",
       "relationship": "Parent",
-      "cross_eapersonid": "935588389839"
+      "cross_eapersonid": "TIMESTAMP040003"
     },
     {
-      "eapersonid": "849588389839",
+      "eapersonid": "TIMESTAMP040002",
       "relationship": "Parent",
-      "cross_eapersonid": "935588389839"
+      "cross_eapersonid": "TIMESTAMP040003"
     }
   ]
 }
