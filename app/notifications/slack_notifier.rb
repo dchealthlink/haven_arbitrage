@@ -34,10 +34,10 @@ def bad_ea_intake(ea_xml, error_message)
 message = "Received a Payload with Finapp ID: #{get_finapp(ea_xml)}\nIt is an Invalid XML\nErrors Found:\n#{error_message}"
 @notifier.ping message
 end
-	
 
-def test
-@notifier.ping "Hello default"
+
+def notify(message)
+@notifier.ping message
 end
 
 

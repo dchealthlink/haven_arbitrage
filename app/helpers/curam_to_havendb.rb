@@ -5,7 +5,7 @@ require "json"
 require 'logger'
 require './app/models/application_xlate.rb'
 require './app/helpers/publish.rb'
-$LOG = Logger.new('./log/log_file.log', 'monthly')
+$LOG = Logger.new('./log/curam.log', 'monthly')
 
 
 
