@@ -30,8 +30,7 @@ message = { "WL5G3N3:ICIDParameters" => { "WL5G3N3:IntegratedCasereference_ID" =
 
 response = client.call(:process, message: message)
 
-$LOG.info("XML recieved from curam for IC:#{ic}\n#{response.xml}")
-	#{Nokogiri::XML(response.xml.to_s).to_xml}")
+$LOG.info("XML recieved from curam for IC:#{ic}\n#{Nokogiri::XML(response.xml.to_s).to_xml}")
 
 response.xml
 end	

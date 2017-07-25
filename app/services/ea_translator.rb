@@ -1,16 +1,15 @@
 require "bunny"
 require './config/secret.rb'
-require "./app/helpers/ea_to_haven.rb"
 require "./app/validations/xml_validator.rb"
 require "./app/notifications/slack_notifier.rb"
-require "./app/helpers/publish_to_ea.rb"
+Dir["./app/helpers/*.rb"].each {|file| require file }
+# require "./app/helpers/publish_to_ea.rb"
+# require "./app/helpers/ea_to_haven.rb"
 
 class EA_Listener
 
-  #include EA_TRANSLATE_MODULE
 
-
-def create_channel(host, vhost, port, user, password)#, queue_name)
+def create_channel(host, vhost, port, user, password)
       conn = Bunny.new(:hostname => host, :vhost => vhost, :port => port, :user => user, :password => password)
       conn.start
       ch = conn.create_channel
@@ -19,10 +18,10 @@ def create_channel(host, vhost, port, user, password)#, queue_name)
 end
 
 
-	def ea_translate(queue_name)
+	def ea_translate
 	  ch = create_channel(EA_RABBIT_AUTH[:host], EA_RABBIT_AUTH[:vhost], EA_RABBIT_AUTH[:port], EA_RABBIT_AUTH[:user], EA_RABBIT_AUTH[:password])
-      q = ch.queue(queue_name, durable: true)
-      $LOG.info("[*] Waiting for messages on Queue:#{queue_name}. To exit press CTRL+C")
+      q = ch.queue(RABBIT_QUEUES[:ea_payload], durable: true)
+      $LOG.info("[*] Waiting for messages on Queue:#{RABBIT_QUEUES[:ea_payload]}. To exit press CTRL+C")
 
 	begin
 	  q.subscribe(:manual_ack => true, :block => true) do |delivery_info, properties, body|
@@ -55,21 +54,15 @@ end #class end
 
  # 1.times do |i|
 	#   fork do	
-	  	EA_Listener.new.ea_translate(RABBIT_QUEUES[:ea_payload])
+	  	EA_Listener.new.ea_translate
 	  #EA_Listener.new.full_determination_translator(EA_RABBIT_AUTH[:queue_name])
 	  # end
 	  # end
 	  # Process.waitall
 
 
- # 5.times do |i|
-	#   fork do	
-	#   Listener.new.pre_determination_translator("Haven_EligibilityResp_RMQ")
-	#   end
-	#   end
-	#   Process.waitall
+
 
 
  
-#Listener.new.listen(AUTH[:host], AUTH[:vhost], AUTH[:port], AUTH[:user], AUTH[:password], AUTH[:queue_name])
 
