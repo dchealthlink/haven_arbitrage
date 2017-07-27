@@ -5,6 +5,7 @@ require "json"
 require 'logger'
 require './app/models/application_xlate.rb'
 require './app/helpers/publish.rb'
+require "./app/notifications/slack_notifier.rb"
 $LOG = Logger.new('./log/curam.log', 'monthly')
 
 
@@ -14,12 +15,13 @@ module Store
 
   extend Publish
 
-def payload_post(payload, xlate)
-   post_payload = payload.to_s.gsub("=>", ":")
-   $LOG.info("#{"*"*100}\n#{payload}\n\n")
+def payload_post(payload)
+  @payload = payload
+   post_payload = @payload.to_s.gsub("=>", ":")
+   $LOG.info("#{"*"*100}\n#{@payload}\n\n")
    application_in_res = RestClient.post('newsafehaven.dcmic.org/arb_input_wrapper.php', post_payload, {content_type: :"application/xml", accept: :"application/json"})
     
-   if payload["Location"] == "application_in" 
+   if @payload["Location"] == "application_in" 
       #fix this
       $icid =  JSON.parse(application_in_res.body)["Return"].first["icid"]
    end
@@ -27,35 +29,32 @@ def payload_post(payload, xlate)
    RestClient.post('newsafehaven.dcmic.org/external_log.php', post_payload)
    $LOG.info("#{application_in_res}\n\n")
 
-   curam_incomplete_app_check(payload, xlate)
+   curam_incomplete_app_check
 end
 
 #Posting email notices to application_in_status table 
 def application_in_status(statustype)
- notice_payload = {"Action"=>"INSERT", "Location"=>"application_in_status", "xaid"=>"#{SecureRandom.uuid}", "Data"=>[{"keyfld"=>"#{$integrated_case_reference}", "keyid"=>"#{$icid}", "icnumber"=>"#{$integrated_case_reference}", "icid"=>"#{$icid}",
+ notice_payload = {"Action"=>"INSERT", "Location"=>"application_in_status", "xaid"=>"#{SecureRandom.uuid}", "Data"=>[{"keyfld"=>"#{@integrated_case_reference}", "keyid"=>"#{$icid}", "icnumber"=>"#{@integrated_case_reference}", "icid"=>"#{$icid}",
                    "statustype"=>"#{statustype}", "statustimestamp"=>"#{Time.now}", "applicationsource"=>"curam"}]}
  application_in_status = RestClient.post('newsafehaven.dcmic.org/arb_input_wrapper.php', notice_payload.to_s.gsub("=>", ":"), {content_type: :"application/xml", accept: :"application/json"})
  puts "Notice Payload: #{notice_payload}\n\n Application in status: #{application_in_status}"
 end  
 
 #*****************************Validations Incomplete/Inconsistant ***************************#
-def curam_incomplete_app_check(payload, xlate)
+def curam_incomplete_app_check
 
-#puts xlate.count
-#xlate = Application_xlate.all
-#puts "$notice: #{$notice.inspect}"
-#puts "payload location: #{payload["Location"]}"
-if !$notice.empty? && (payload["Location"] == "application_pdc_person_in")
- message = "IC: #{$integrated_case_reference}\n\nInfo: \n#{$notice.join(" \n")} \n\n\n Thanks,\n -Arbitrage"
+if !@notice.empty? && (@payload["Location"] == "application_pdc_person_in")
+ message = "IC: #{@integrated_case_reference}\n\nInfo: \n#{@notice.join(" \n")} \n\n\n Thanks,\n -Arbitrage"
  email_notice(message)
+ Slack_it.new.notify(message)  #slack notification
  application_in_status("incomplete")
- $notice.clear
+ @notice.clear
 end
 
-mandatory_fields = xlate.select {|value| value[:sourcein] == "curam" && value[:targetout] == "haven" && value[:mandatory] == "Y" && value[:targettype] == payload["Location"]}
+mandatory_fields = @application_xlate.select {|value| value[:sourcein] == "curam" && value[:targetout] == "haven" && value[:mandatory] == "Y" && value[:targettype] == @payload["Location"]}
 #puts "Mandatory field list: **** #{mandatory_fields.inspect}"
 
-payload_fields = payload["Data"].first.keys
+payload_fields = @payload["Data"].first.keys
 
 #puts "payload keys: #{payload_fields}"
 unless mandatory_fields.empty?
@@ -69,16 +68,17 @@ mandatory_fields.uniq { |value| value.targetfield }.each do |value|
   else
    @missing_fields << value.sourcefield
     
-    puts "send notifications: #{value.sourcefield} missing in curam xml in payload: #{payload["Location"]}"
+    puts "send notifications: #{value.sourcefield} missing in curam xml in payload: #{@payload["Location"]}"
     #puts "payload keys: #{payload_fields}"
     tf << false
   end
 
 end
   unless @missing_fields.empty?
-    message = "IC: #{payload["Data"].first["icnumber"]}\n\nError: <#{@missing_fields.join(", ")}> value missing in curam data
+    message = "IC: #{@payload["Data"].first["icnumber"]}\n\nError: <#{@missing_fields.join(", ")}> value missing in curam data
                 \n\n\n Thanks,\n -Arbitrage"
     email_notice(message)
+    Slack_it.new.notify(message)
     validation_log
   end
 #puts "tf: #{tf}"
@@ -87,20 +87,19 @@ end #unless condition
 end #method
 
 
-def curam_inconsistent_app_check(curam_xml)
-  curam_response = Nokogiri::XML(curam_xml)
- ic =  curam_response.xpath("//integrated_case_reference").text.to_s
-  
-  if curam_response.xpath("//curam_applicant").count >= 2 && curam_response.xpath("//relationship").text.strip.empty?
-    message = "Hello\n\n IC: #{ic}\n\nError: No relationship data found in curam xml
+def curam_inconsistent_app_check
+ 
+  if @curam_xml.xpath("//curam_applicant").count >= 2 && @curam_xml.xpath("//relationship").text.strip.empty?
+    message = "Hello\n\n IC: #{@integrated_case_reference}\n\nError: No relationship data found in curam xml
                 \n\n\n\n\n Thanks,\n -Arbitrage"
     email_notice(message)
+    Slack_it.new.notify(message)
     validation_log
     application_in_status("inconsistent")
     return false
   # elsif curam_response.xpath("//relationship").text.include?("Is Unrelated to")
   #    message = "Hello\n\n IC: #{ic}\n\nError: There is an unrelated applicant in this application and we don't like that.
-  #               \n\n\n\n\n Thanks,\n -Arbitrage & \n We love you Tom....!"
+  #               \n\n\n\n\n Thanks,\n -Arbitrage"
   #   email_notice(message)
   #   validation_log
   #   return false
@@ -119,15 +118,15 @@ payload = {
 "Location" => "external_log", 
 "xaid" => "value", 
 "keyindex" => "integrated_case_reference",
-"keyvalue" => $curam_xml.xpath("//integrated_case_reference").text,
+"keyvalue" => @curam_xml.xpath("//integrated_case_reference").text,
 "keytype" => "Notification",
 "keyresultid" => $icid,
 "status" => "Success",
 "keytimestamp" => Time.now,
 "queuename" => "email-out",
-"apprefnum" => $curam_xml.xpath("//AppCaseRef").text.to_s,
+"apprefnum" => @curam_xml.xpath("//AppCaseRef").text.to_s,
 "requesttype" => "Sent",
-"Data" => [ "payload" => $curam_raw_xml ]
+"Data" => [ "payload" => @curam_raw_xml ]
 
 }
 
@@ -145,15 +144,15 @@ payload = {
 "Location" => "external_log", 
 "xaid" => "value", 
 "keyindex" => "integrated_case_reference",
-"keyvalue" => $curam_xml.xpath("//integrated_case_reference").text,
+"keyvalue" => @curam_xml.xpath("//integrated_case_reference").text,
 "keytype" => "Curam",
 "keyresultid" => $icid != nil ? $icid : "",
 "status" => "Success",
 "keytimestamp" => Time.now.to_s,
 "queuename" => "Haven_ICID_RMQ",
-"apprefnum" => $curam_xml.xpath("//AppCaseRef").text.to_s,
+"apprefnum" => @curam_xml.xpath("//AppCaseRef").text.to_s,
 "requesttype" => "Sent",
-"xmlpayload" => "#{$curam_raw_xml}"
+"xmlpayload" => "#{@curam_raw_xml}"
 
 }
 
@@ -167,19 +166,12 @@ end
 
 #***************************************************************************************#
 
-def verify_date(date)
-  if date == "0001-01-01"
-  return "null"
-  else
-    date
-  end
-end
 
 
 
-def curam_xlate(st, tt, sf, tf, sv, application_xlate)
+def curam_xlate(st, tt, sf, tf, sv)
   
-  check_flag =  application_xlate.select do |value|
+  check_flag =  @application_xlate.select do |value|
     value[:sourcein] == "curam" && value[:targetout] == "haven" && value[:targettype] == "#{tt}" && value[:sourcefield] == "#{sf}" && value[:targetfield] == "#{tf}"
   end
 
@@ -224,7 +216,7 @@ elsif sv == "" #|| sv == "default"
     default_field = check_flag.select { |value| value.siflag == "N" && value.sourcevalue == "default" }
     unless default_field.empty?
     sv = default_field.first.defaultvalue
-    $notice << "source value missing for <#{sf}> so assuming the value : <#{sv}>"
+    @notice << "source value missing for <#{sf}> so assuming the value : <#{sv}>"
     puts "source value missing for <#{sf}> so assuming the value : <#{sv}>"
   end
   end
@@ -246,19 +238,19 @@ res = RestClient.post('newsafehaven.dcmic.org/external_log.php', payload)
 end 
 
 
-def data_block(application_xlate, st, tt, records, ic)
-arr = application_xlate.select do |value|
+def data_block(st, tt, records)
+arr = @application_xlate.select do |value|
   value[:sourcein] == "curam" && value[:targetout] == "haven" && value[:targettype] == tt
 end
 hs = {}
 #puts "In fields:  #{arr}" 
 arr.uniq { |value| value.targetfield }.each do |val|
   
-  source_value = curam_xlate(st, tt, val.sourcefield, val.targetfield, xml_search(records, val.sourcefield), application_xlate)
+  source_value = curam_xlate(st, tt, val.sourcefield, val.targetfield, xml_search(records, val.sourcefield))
   hs[val.targetfield.to_s] = source_value if (source_value != "" && source_value.class.to_s != "Array")
   
 end
-hs.merge!("icnumber" => ic)
+hs.merge!("icnumber" => @integrated_case_reference)
 #puts "Insert record: #{hs.inspect}"
 return hs
 end
@@ -279,35 +271,36 @@ end
 def store_to_haven_db(curam_xml)
 
 curam_response = Nokogiri::XML(curam_xml)
-$curam_xml = Nokogiri::XML(curam_xml)
-$curam_raw_xml = curam_xml
-$notice = []
-$tax_no = 1
-@application_xlate = Application_xlate.all
+@curam_xml = Nokogiri::XML(curam_xml)
+@curam_raw_xml = curam_xml
+@notice = []
+@tax_no = 1
+@application_xlate = Application_xlate.where(["sourcein=? and targetout=? and status=?", "curam", "haven", "A"]).to_a
 
- @integrated_case_reference = curam_response.xpath("//integrated_case_reference").text.to_s
- $integrated_case_reference = curam_response.xpath("//integrated_case_reference").text.to_s
-
+@integrated_case_reference = @curam_xml.xpath("//integrated_case_reference").text.to_s
+ 
 log_curam_intake
+
+
 #**************************************************************#
 application_in_payload = {
 
  "Action" => "INSERT",
  "Location" => "application_in",
  "xaid" => "#{SecureRandom.uuid}",
- "Data" => [data_block(@application_xlate, "application", "application_in", curam_response, @integrated_case_reference)]
+ "Data" => [data_block("application", "application_in", @curam_xml)]
 
 }
 
 
-@application_in = payload_post(application_in_payload, @application_xlate)
+@application_in = payload_post(application_in_payload)
 
 #**************************************************************#
 
 
 
 #****************************Person In payload****************************************#
-curam_response.xpath("//curam_applicant").each_with_index do |applicant, applicant_num|
+@curam_xml.xpath("//curam_applicant").each_with_index do |applicant, applicant_num|
 
    @concern_role_id = applicant.search("concern_role_id").text.to_s 
 application_person_in_payload = {
@@ -315,11 +308,11 @@ application_person_in_payload = {
  "Action" => "INSERT",
  "Location" => "application_person_in",
  "xaid" => "#{SecureRandom.uuid}",
- "Data" => [data_block(@application_xlate, "curam_applicant", "application_person_in", applicant, @integrated_case_reference).merge!("icid" => $icid)]
+ "Data" => [data_block("curam_applicant", "application_person_in", applicant).merge!("icid" => $icid)]
   
   }
 
-@application_person_in = payload_post(application_person_in_payload, @application_xlate)
+@application_person_in = payload_post(application_person_in_payload)
 
 
 #*********************Address*************************************************************************#
@@ -331,11 +324,11 @@ if address.search("*").text != ""
  "Action" => "INSERT",
  "Location" => "application_person_address_in",
  "xaid" => "#{SecureRandom.uuid}",
- "Data" => [data_block(@application_xlate, "curam_applicant", "application_person_address_in", address, @integrated_case_reference).merge!("personid" => @concern_role_id.to_s, "icid" => $icid)]
+ "Data" => [data_block("curam_applicant", "application_person_address_in", address).merge!("personid" => @concern_role_id.to_s, "icid" => $icid)]
   
   }
 
-@application_person_address_in = payload_post(application_person_address_in_payload, @application_xlate)
+@application_person_address_in = payload_post(application_person_address_in_payload)
 end
 end
 #*****************************************************************************************************#
@@ -352,11 +345,11 @@ application_person_income_in_payload = {
   "Action" => "INSERT",
   "Location" => "application_person_income_in",
   "xaid" => "#{SecureRandom.uuid}",
-  "Data" => [data_block(@application_xlate, "income", "application_person_income_in", income, @integrated_case_reference).merge!("personid" => @concern_role_id.to_s, "icid" => $icid)]
+  "Data" => [data_block("income", "application_person_income_in", income).merge!("personid" => @concern_role_id.to_s, "icid" => $icid)]
    
    }
 
-@application_person_income_in = payload_post(application_person_income_in_payload, @application_xlate)
+@application_person_income_in = payload_post(application_person_income_in_payload)
 end
 end
 #**************************************************************************************#
@@ -373,11 +366,11 @@ if relationship.search("*").text != ""
   "Action" => "INSERT",
   "Location" => "application_relationship_in",
   "xaid" => "#{SecureRandom.uuid}",
-  "Data" => [data_block(@application_xlate, "relationship", "application_relationship_in", relationship, @integrated_case_reference).merge!("personid" => @concern_role_id.to_s, "icid" => $icid)]
+  "Data" => [data_block("relationship", "application_relationship_in", relationship).merge!("personid" => @concern_role_id.to_s, "icid" => $icid)]
   
   }
 
-@application_relationship_in = payload_post(application_relationship_in_payload, @application_xlate)
+@application_relationship_in = payload_post(application_relationship_in_payload)
 end
 end
 
@@ -388,9 +381,9 @@ case applicant.search("tax_filing_status").text
   when "Tax Filer" 
 
     if applicant.search("tax_filing_together").text == "true"
-    $tax_no = 1
+    @tax_no = 1
     else
-    $tax_no += 1
+    @tax_no += 1
     end
 
 # Filer post
@@ -398,9 +391,9 @@ case applicant.search("tax_filing_status").text
   "Action" => "INSERT",
   "Location" => "application_tax_in",
   "xaid" => "#{SecureRandom.uuid}",
-  "Data" => [data_block(@application_xlate, "tax_relationship", "application_tax_in", applicant, @integrated_case_reference).merge!("icid" => $icid, "tax_no" => $tax_no)]
+  "Data" => [data_block("tax_relationship", "application_tax_in", applicant).merge!("icid" => $icid, "tax_no" => @tax_no)]
   }
-  @application_tax_in = payload_post(application_tax_in_payload, @application_xlate)
+  @application_tax_in = payload_post(application_tax_in_payload)
 #Filer's dependents post
 
 applicant.search("tax_dependents").each do |tax_dependents|
@@ -411,9 +404,9 @@ if tax_dependents.search("*").text != ""
   "Action" => "INSERT",
   "Location" => "application_tax_in",
   "xaid" => "#{SecureRandom.uuid}",
-  "Data" => [data_block(@application_xlate, "tax_relationship", "application_tax_in", dependent, @integrated_case_reference).merge!("personid" => dependent.text.to_s, "filer_type" => "Dependents", "icid" => $icid, "tax_no" => $tax_no)]
+  "Data" => [data_block("tax_relationship", "application_tax_in", dependent).merge!("personid" => dependent.text.to_s, "filer_type" => "Dependents", "icid" => $icid, "tax_no" => @tax_no)]
   }
-  @application_tax_in = payload_post(application_tax_in_payload, @application_xlate)
+  @application_tax_in = payload_post(application_tax_in_payload)
 end #do
 end #do
 end #if
@@ -425,9 +418,9 @@ end #if
   "Action" => "INSERT",
   "Location" => "application_tax_in",
   "xaid" => "#{SecureRandom.uuid}",
-  "Data" => [data_block(@application_xlate, "tax_relationship", "application_tax_in", applicant, @integrated_case_reference).merge!("icid" => $icid, "tax_no" => "99")]
+  "Data" => [data_block("tax_relationship", "application_tax_in", applicant).merge!("icid" => $icid, "tax_no" => "99")]
   }
-  @application_tax_in = payload_post(application_tax_in_payload, @application_xlate)
+  @application_tax_in = payload_post(application_tax_in_payload)
 end
 
 end
@@ -437,22 +430,22 @@ end
   
 # # #**************************************
 
-curam_response.xpath("//product_delivery_case").each do |pdc|
+@curam_xml.xpath("//product_delivery_case").each do |pdc|
 
 @pdc_case_reference = pdc.search("pdc_case_reference").first.text.to_s
 
-pdc_data = data_block(@application_xlate, "pdc", "application_pdc_in", pdc, @integrated_case_reference).merge!("icid" => $icid)
+pdc_data = data_block("pdc", "application_pdc_in", pdc).merge!("icid" => $icid)
 
 if pdc.search("pdc_product_type_description").children.text == "Insurance Assistance"
 # APTC Extraction
-          aptc = curam_response.search("aptc_amount")
-          aptc_data = data_block(@application_xlate, "pdc", "application_pdc_in", aptc, @integrated_case_reference)
+          aptc = @curam_xml.search("aptc_amount")
+          aptc_data = data_block("pdc", "application_pdc_in", aptc)
           pdc_data.merge!(aptc_data)
        
 
 # CSR Extraction
-          csr = curam_response.search("csr")
-          csr_data = data_block(@application_xlate, "pdc", "application_pdc_in", csr, @integrated_case_reference)
+          csr = @curam_xml.search("csr")
+          csr_data = data_block("pdc", "application_pdc_in", csr)
           pdc_data.merge!(csr_data)
       
 end
@@ -467,7 +460,7 @@ end
   
      }
 
-@application_pdc_in = payload_post(application_pdc_in_payload, @application_xlate)
+@application_pdc_in = payload_post(application_pdc_in_payload)
 
 
 
@@ -478,12 +471,12 @@ application_pdc_person_in_payload = {
    "Action" => "INSERT",
    "Location" => "application_pdc_person_in",
      "xaid" => "#{SecureRandom.uuid}",  
-     "Data" => [data_block(@application_xlate, "pdc", "application_pdc_person_in", pdc_person, @integrated_case_reference).merge!("pdcrefnum" => @pdc_case_reference, "icid" => $icid)]
+     "Data" => [data_block("pdc", "application_pdc_person_in", pdc_person).merge!("pdcrefnum" => @pdc_case_reference, "icid" => $icid)]
  
    }
 
 
-@application_pdc_person_in = payload_post(application_pdc_person_in_payload, @application_xlate)
+@application_pdc_person_in = payload_post(application_pdc_person_in_payload)
 
 
 
