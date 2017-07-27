@@ -4,10 +4,6 @@ require "./config/secret.rb"
 require "./app/validations/xml_validator.rb"
 require "./app/notifications/slack_notifier.rb"
 Dir["./app/helpers/*.rb"].each {|file| require file }
-# require "./app/helpers/publish"
-# require "./app/helpers/EA_Response_builder"
-# require "./app/helpers/curam_to_havendb"
-# require "./app/helpers/curam_esb_call.rb"
 
 
 
@@ -56,17 +52,17 @@ end
 	    if validator.check_syntax_error.any?
 	   		error_message = validator.get_syntax_error_message
 	   		#todo where to notify if invalid xml recieved
-	   		#Slack_it.new.notify("Curam payload recieved with IC: #{@ic_hash[:ic]} and xml for this IC is invalid with following errors.\nSyntax errors found: #{error_message}")
+	   		Slack_it.new.notify("Curam payload recieved with IC: #{@ic_hash[:ic]} and xml for this IC is invalid with following errors.\nSyntax errors found: #{error_message}")
 	   	else
-	   		#Slack_it.new.notify("Curam payload recieved with IC: #{@ic_hash[:ic]} and xml for this IC is valid")
+	   		Slack_it.new.notify("Curam payload recieved with IC: #{@ic_hash[:ic]} and xml for this IC is valid")
 	    complete = store_to_haven_db(curam_response)
-	    consistent = curam_inconsistent_app_check(curam_response)
+	    consistent = curam_inconsistent_app_check
 	    if ( complete && consistent )
-	    	#Slack_it.new.notify("\nIt is a complete and consistent application")
+	    	Slack_it.new.notify("\nIt is a complete and consistent application\n****************************\n")
 	    	puts "***********************Hurray validations success******************************"
 	    EA_Response_builder.call_haven(curam_response)
 	    else
-	    	#Slack_it.new.notify("\nbut it is an incomplete or inconsistent application")
+	    	Slack_it.new.notify("\nbut it is an incomplete or inconsistent application\n****************************\n")
 	    end
 	    end
    end
