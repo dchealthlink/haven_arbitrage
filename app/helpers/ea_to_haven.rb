@@ -115,7 +115,7 @@ end   # strip_tag_value methods end
 def translate_ea_to_haven(ea_xml_string)
 
 @ea_xml = Nokogiri::XML(ea_xml_string)
-
+@ea_xml.remove_namespaces!    # to remove all namespaces from xml docs
 #@xlate = Application_xlate.where(["sourcein=? and targetout=?", "ea", "haven"])
 @xlate = Application_xlate.where(["sourcein=? and targetout=? and status=?", "ea", "haven", "A"]).to_a
 

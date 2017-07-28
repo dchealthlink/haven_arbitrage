@@ -3,6 +3,7 @@ require './config/secret.rb'
 require "./app/validations/xml_validator.rb"
 require "./app/notifications/slack_notifier.rb"
 Dir["./app/helpers/*.rb"].each {|file| require file }
+$LOG = Logger.new('./log/log_file.log', 'monthly')
 # require "./app/helpers/publish_to_ea.rb"
 # require "./app/helpers/ea_to_haven.rb"
 
