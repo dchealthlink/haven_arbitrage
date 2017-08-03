@@ -422,8 +422,18 @@ puts "I am in assistance_tax_households block and the path: #{faa.path}"
 						  athm_block.element_children.each do |deductions|       #children of "individual"
 
 						  	deductions.element_children.each do |deduction|
+						  		if deduction.name == "deduction_id"
+						  			@deduction_id = strip_tag_value(deduction.content)
+						  		end
+
+						  		if deduction.name == "deduction_type"
+						  			@deduction_type = strip_tag_value(deduction.content)
+						  		end
+						  	end
+
+						  	deductions.element_children.each do |deduction|
 							  	x = deduction.path
-								process(deduction, x, @xlate, arr, faa_id, @person_id, @income_id, @income_type, nil)
+								process(deduction, x, @xlate, arr, faa_id, @person_id, @deduction_id, @deduction_type, nil)
 							end
 						  end
 						end
