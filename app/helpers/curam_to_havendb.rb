@@ -51,7 +51,7 @@ if !@notice.empty? && (@payload["Location"] == "application_pdc_person_in")
  @notice.clear
 end
 
-mandatory_fields = @application_xlate.select {|value| value[:sourcein] == "curam" && value[:targetout] == "haven" && value[:mandatory] == "Y" && value[:targettype] == @payload["Location"]}
+mandatory_fields = @application_xlate.select {|value| value[:mandatory] == "Y" && value[:targettype] == @payload["Location"]}
 #puts "Mandatory field list: **** #{mandatory_fields.inspect}"
 
 payload_fields = @payload["Data"].first.keys
@@ -172,7 +172,7 @@ end
 def curam_xlate(st, tt, sf, tf, sv)
   
   check_flag =  @application_xlate.select do |value|
-    value[:sourcein] == "curam" && value[:targetout] == "haven" && value[:targettype] == "#{tt}" && value[:sourcefield] == "#{sf}" && value[:targetfield] == "#{tf}"
+     value[:targettype] == "#{tt}" && value[:sourcefield] == "#{sf}" && value[:targetfield] == "#{tf}"
   end
 
 if check_flag.any? && sv != ""
@@ -192,10 +192,8 @@ if check_flag.any? && sv != ""
 check_flag.each do |value|
    case value.siflag 
     when "N"
-    xlate =  check_flag.select do |value|
-      value[:sourcein] == "curam" && value[:targetout] == "haven" && value[:targettype] == "#{tt}" && value[:sourcefield] == "#{sf}" && value[:sourcevalue] == "#{sv}"  
+    xlate =  check_flag.select { |value| value[:targettype] == "#{tt}" && value[:sourcefield] == "#{sf}" && value[:sourcevalue] == "#{sv}" }
       #value[:sourcein] == "curam" && value[:targetout] == "haven" && value[:targettype] == "application_person_income_in" && value[:sourcefield] == "end_date" && value[:sourcevalue] == "2017-12-01"
-      end
     #   puts xlate.inspect
     # #puts "----------------#{sv}---------------------------"
     x = xlate.any? ? xlate.first.targetvalue : ""#error_log("Error: #{xlate.inspect}")
@@ -239,9 +237,7 @@ end
 
 
 def data_block(st, tt, records)
-arr = @application_xlate.select do |value|
-  value[:sourcein] == "curam" && value[:targetout] == "haven" && value[:targettype] == tt
-end
+arr = @application_xlate.select { |value| value[:targettype] == tt }
 hs = {}
 #puts "In fields:  #{arr}" 
 arr.uniq { |value| value.targetfield }.each do |val|
