@@ -1,6 +1,8 @@
 require 'nokogiri'
 require 'rest-client'
 require "./app/models/application_xlate.rb"
+require "./app/helpers/publish_to_ea.rb"
+require "./app/notifications/slack_notifier.rb"
 $LOG = Logger.new('./log/log_file.log', 'monthly')
 
 
@@ -80,12 +82,16 @@ end
 
 end # process method end
 
-def ea_payload_post(payload, faa_id)
+def ea_payload_post(payload)
 file_input_wrapper_response = RestClient.post('newsafehaven.dcmic.org/file_input_wrapper.php', payload)
-$LOG.info("***********************\n\n#{file_input_wrapper_response}\n**********************\n\n")
-puts "file_input_wrapper_response: #{file_input_wrapper_response}"
-unless file_input_wrapper_response.body.include?("Error description:")
-	payload = {"finAppId"=>faa_id}.to_s.gsub("=>", ":")
+$LOG.info("***********************\n\n#{file_input_wrapper_response.body}\n**********************\n\n")
+puts "file_input_wrapper_response: #{file_input_wrapper_response.body}"
+response_hash = eval(file_input_wrapper_response.body)
+if response_hash.keys.include?(:ERROR)
+	Publish_EA.new(@properties.to_hash).error_intake_status(response_hash[:ERROR], "501")
+	Slack_it.new.notify(response_hash[:ERROR])
+else
+	payload = {"finAppId"=>@faa_id}.to_s.gsub("=>", ":")
 	puts "file_input_wrapper_response payload: #{payload}"
 	finapp_system_wrapper_response = RestClient.post('newsafehaven.dcmic.org/finapp_system_wrapper.php', payload)
 	$LOG.info("***********************\n\n#{finapp_system_wrapper_response.body}\n**********************\n\n")
@@ -94,9 +100,10 @@ end
 end # ea_payload_post method end
 
 
-def to_haven(rabbitmq_message)
+def to_haven(rabbitmq_message, properties)
+@properties = properties
 payload_hash = translate_ea_to_haven(rabbitmq_message)
-ea_payload_post(payload_hash[:payload], payload_hash[:faa_id])
+ea_payload_post(payload_hash[:payload])
 end
 
 
@@ -498,6 +505,8 @@ filer_type.delete_if {|x| x[3]==nil}
 
 filer_type.uniq.each {|x| arr << x}
 
+#add rabbitmq headers to finapp in fields
+arr.concat(add_headers_to_finapp_in)
 
 $LOG.info("***********************\n\nThe Holy moly Big Array:\n #{arr.inspect}\n**********************\n\n")
 
@@ -527,6 +536,25 @@ translated_hash[:faa_id]  = @faa_id
 translated_hash
 
 end # translate_ea_to_haven method end
+
+def add_headers_to_finapp_in
+#[finapp_id, tablename, person_id, id, type, tbd, key, value]
+
+#sample properties data properties = {:content_type=>"application/octet-stream", :headers=>{"submitted_timestamp"=>"2017-07-13 14:57:09 -0400", "correlation_id"=>"22236845cc70442fa0039c5b20c23c28", "family_id"=>"5967bebed7c2dc110200000a", "application_id"=>"5967beddd7c2dc0bd1000000"}, :delivery_mode=>2, :priority=>0, :correlation_id=>"22236845cc70442fa0039c5b20c23c28", :timestamp=>"2017-07-13 14:57:09 -0400", :app_id=>"enroll"}
+
+#*********Note: please confirm naming conventions of keys
+headers_mapping = { "correlation_id" => "correlationid", "family_id" => "familyid", "havenic_id" => "havenicid", "ecase_id" => "ecaseid"}
+
+@headers = @properties[:headers]	
+finapp_in_headers = []
+headers_mapping.each do |key, value|
+	if @properties.keys.include?(key) || @headers.keys.include?(key)
+	result = @properties[key] || @headers[key]
+	finapp_in_headers << [@faa_id, "finapp_in", nil, nil, nil, nil, value, result]	
+	end #if end
+end #do end
+return finapp_in_headers
+end #add_headers_to_finapp_in  end
 
 
 end # module end

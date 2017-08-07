@@ -27,16 +27,19 @@ end
 	begin
 	  q.subscribe(:manual_ack => true, :block => true) do |delivery_info, properties, body|
 	  	$LOG.info("Received: delivery_info:  #{delivery_info}\nproperties:  #{properties}\nbody:  #{body}\n")
+	  	# puts "properties class is #{properties.to_hash.class}"
+	  	# puts "properties inspect: #{properties.to_hash.inspect}"
+	  	# exit
 	    validator = Validate_XML.new(body)
 	   	if validator.check_syntax_error.any?
 	   		error_message = validator.get_syntax_error_message
 	   		Slack_it.new.bad_ea_intake(body, error_message)
 	   		
 	   		#publish to EA queue on error payload
-	   		Publish_EA.new(properties).error_intake_status(error_message)
+	   		Publish_EA.new(properties.to_hash).error_intake_status(error_message, "422")
 	   	else
 	   		Slack_it.new.good_ea_intake(body)
-	    EA_translate.new.to_haven(body)
+	    EA_translate.new.to_haven(body, properties.to_hash)
 	    ch.ack(delivery_info.delivery_tag)
 	    $LOG.info("[x] Finished with EA to Haven translation")
 		end	
