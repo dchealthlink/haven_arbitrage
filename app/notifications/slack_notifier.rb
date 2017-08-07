@@ -32,7 +32,7 @@ end
 
 
 def good_ea_intake(ea_xml)
-message = "Received a Payload with Finapp ID: #{get_finapp(ea_xml)}\nIt is a valid XML and processed succesfully"
+message = "Received a Payload with Finapp ID: #{get_finapp(ea_xml)}\nIt is a valid XML\n"
 @notifier.ping message
 end
 
