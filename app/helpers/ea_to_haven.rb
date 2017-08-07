@@ -1,5 +1,6 @@
 require 'nokogiri'
 require 'rest-client'
+require 'json'
 require "./app/models/application_xlate.rb"
 require "./app/helpers/publish_to_ea.rb"
 require "./app/notifications/slack_notifier.rb"
@@ -86,11 +87,13 @@ def ea_payload_post(payload)
 file_input_wrapper_response = RestClient.post('newsafehaven.dcmic.org/file_input_wrapper.php', payload)
 $LOG.info("***********************\n\n#{file_input_wrapper_response.body}\n**********************\n\n")
 puts "file_input_wrapper_response: #{file_input_wrapper_response.body}"
-response_hash = eval(file_input_wrapper_response.body)
-if response_hash.keys.include?(:ERROR)
-	Publish_EA.new(@properties.to_hash).error_intake_status(response_hash[:ERROR], "501")
-	Slack_it.new.notify(response_hash[:ERROR])
-else
+response_hash = JSON.parse(file_input_wrapper_response.body)
+puts "response_hash: #{response_hash}"
+if response_hash.keys.include?("ERROR")
+	Publish_EA.new(@properties.to_hash).error_intake_status(response_hash["ERROR"], "501")
+	Slack_it.new.notify(response_hash["ERROR"])
+elsif response_hash.keys.include?("Success")
+	Slack_it.new.notify("Loaded successfully in to Finapp in tables")
 	payload = {"finAppId"=>@faa_id}.to_s.gsub("=>", ":")
 	puts "file_input_wrapper_response payload: #{payload}"
 	finapp_system_wrapper_response = RestClient.post('newsafehaven.dcmic.org/finapp_system_wrapper.php', payload)
@@ -461,7 +464,7 @@ puts "I am in assistance_tax_households block and the path: #{faa.path}"
 							  	puts "The benefit insurance ID: #{@insurance_id.inspect}**************"
 							    end
 
-						  		if benefit.name == "benefit_type"
+						  		if benefit.name == "benefit_insurance_type"
 							  	@insurance_type = strip_tag_value(benefit.content)
 							  	puts "The benefit type: #{@insurance_type.inspect}**************"
 							    end
