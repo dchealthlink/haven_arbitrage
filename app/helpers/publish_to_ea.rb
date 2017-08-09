@@ -12,7 +12,8 @@ class Publish_EA
       @channel = @conn.create_channel
       @properties = properties
       @headers = @properties[:headers]
-      @queue = @channel.queue(RABBIT_QUEUES[:ea_intake_error], durable: true)
+      #@queue = @channel.queue(RABBIT_QUEUES[:ea_intake_error], durable: true)
+      @exchange = @channel.topic(EA_RABBIT_AUTH[:exchange], :auto_delete => true)
    end
 
 
@@ -20,9 +21,9 @@ class Publish_EA
       @headers.merge!(return_status: "#{return_status}")
       @headers["submitted_timestamp"] = @headers["submitted_timestamp"].to_s  #RabbitMQ conplaints on non string time stamp
       message = { error_message: error_message.to_s }.to_json
-      @queue.publish(message, :persistant => true, :content_type=>"application/octet-stream", :headers => @headers, :correlation_id => @properties[:correlation_id], :timestamp => Time.now.to_i, :app_id => @properties[:app_id])
+      @exchange.publish(message, :routing_key => EA_RABBIT_AUTH[:exchange], :persistant => true, :content_type=>"application/octet-stream", :headers => @headers, :correlation_id => @properties[:correlation_id], :timestamp => Time.now.to_i, :app_id => @properties[:app_id])
    	@conn.close
-      $LOG.debug("Invalid XML with Error messages: #{error_message} \nand published message back to EA with headers:#{@headers}")
+      $LOG.debug("Invalid/Inconsistent XML payload with Error messages: #{error_message} \nand published message back to EA with headers:#{@headers}")
    end
 
 
