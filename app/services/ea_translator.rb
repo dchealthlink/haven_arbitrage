@@ -25,7 +25,7 @@ end
       $LOG.info("[*] Waiting for messages on Queue:#{RABBIT_QUEUES[:ea_payload]}. To exit press CTRL+C")
 
 	begin
-	  q.subscribe(:manual_ack => true, :block => true) do |delivery_info, properties, body|
+	  q.subscribe(:manual_ack => false, :block => true) do |delivery_info, properties, body|
 	  	$LOG.info("Received: delivery_info:  #{delivery_info}\nproperties:  #{properties}\nbody:  #{body}\n")
 	  	# puts "properties class is #{properties.to_hash.class}"
 	  	# puts "properties inspect: #{properties.to_hash.inspect}"
@@ -40,7 +40,7 @@ end
 	   	else
 	   		Slack_it.new.good_ea_intake(body)
 	    EA_translate.new.to_haven(body, properties.to_hash)
-	    ch.ack(delivery_info.delivery_tag)
+	    #ch.ack(delivery_info.delivery_tag)
 	    $LOG.info("[x] Finished with EA to Haven translation")
 		end	
 	  end

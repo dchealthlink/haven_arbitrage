@@ -13,7 +13,7 @@ class Publish_EA
       @properties = properties
       @headers = @properties[:headers]
       #@queue = @channel.queue(RABBIT_QUEUES[:ea_intake_error], durable: true)
-      @exchange = @channel.fanout(EA_RABBIT_AUTH[:exchange], :auto_delete => true)
+      @exchange = @channel.fanout( EA_RABBIT_AUTH[:exchange], :durable => true)
    end
 
 
