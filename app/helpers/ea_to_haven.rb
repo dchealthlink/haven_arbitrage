@@ -1,6 +1,7 @@
 require 'nokogiri'
 require 'rest-client'
 require 'json'
+require './config/secret.rb'
 require "./app/models/application_xlate.rb"
 require "./app/helpers/publish_to_ea.rb"
 require "./app/notifications/slack_notifier.rb"
@@ -131,12 +132,12 @@ def translate_ea_to_haven(ea_xml_string)
 
 arr = []
 @tablename_array = []
-
+faa_id = @ea_xml.at("//financial_assistance_application/id/id")
+@faa_id = strip_tag_value(faa_id.content)
+log_ea_intake
 
 @ea_xml.at("//financial_assistance_application").element_children.each do |faa|        #faa and has 3 children(id, benchmark_plan, assistance_tax_households)
 
-	faa_id = @ea_xml.at("//financial_assistance_application/id/id")
-	@faa_id = strip_tag_value(faa_id.content)
 	puts "The tag name is: #{faa.name} and path is: #{faa.path}"
 
 x = faa.path
@@ -558,6 +559,31 @@ headers_mapping.each do |key, value|
 end #do end
 return finapp_in_headers
 end #add_headers_to_finapp_in  end
+
+
+def log_ea_intake
+
+payload = {
+
+"action" => "INSERT", 
+"Location" => "external_log", 
+"xaid" => "value", 
+"keyindex" => "finapp_id",
+"keyvalue" => @faa_id,
+"keytype" => "Log",
+"keyresultid" => 1,  #This value is hardcoded to 1 but need to change in the future ref Tom. Ex: $icid in curam translator 
+"status" => "Success",
+"keytimestamp" => Time.now,
+"queuename" => RABBIT_QUEUES[:ea_payload],
+"requesttype" => "Sent",
+"xmlpayload" => "#{@ea_xml}" 
+
+}
+
+application_in_res = RestClient.post('newsafehaven.dcmic.org/external_log_test.php', payload.to_s.gsub("=>", ":"), {content_type: :"application/json", accept: :"application/json"})
+$LOG.info("EA payload logged to external_log table with response status: #{application_in_res.code} \n payload: #{payload }")
+application_in_res.body
+end #log_ea_intake  end
 
 
 end # module end
