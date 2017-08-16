@@ -332,6 +332,7 @@ end
 
 
 #**********************************Income*********************************************#
+@incomeid = 1
 applicant.search("income").each do |income|
 
 if income.search("*").text != ""  
@@ -341,34 +342,36 @@ application_person_income_in_payload = {
   "Action" => "INSERT",
   "Location" => "application_person_income_in",
   "xaid" => "#{SecureRandom.uuid}",
-  "Data" => [data_block("income", "application_person_income_in", income).merge!("personid" => @concern_role_id.to_s, "icid" => $icid)]
+  "Data" => [data_block("income", "application_person_income_in", income).merge!("personid" => @concern_role_id.to_s, "icid" => $icid, "incomeid" => @incomeid)]
    
    }
 
 @application_person_income_in = payload_post(application_person_income_in_payload)
+@incomeid +=1
 end
 end
 #**************************************************************************************#
 
 #***********************************Deductions****************************************
 # #Note: Income and deductions store in same table --> "application_person_income_in"
-# applicant.search("deduction").each do |deduction|
+applicant.search("deduction").each do |deduction|
 
-# if deduction.search("*").text != ""  
+if deduction.search("*").text != ""  
 
-# application_person_deduction_in_payload = { 
+application_person_deduction_in_payload = { 
 
-#   "Action" => "INSERT",
-#   "Location" => "application_person_income_in",
-#   "xaid" => "#{SecureRandom.uuid}",
-#   "Data" => [data_block("income", "application_person_income_in", deduction).merge!("personid" => @concern_role_id.to_s, "icid" => $icid)]
+  "Action" => "INSERT",
+  "Location" => "application_person_income_in",
+  "xaid" => "#{SecureRandom.uuid}",
+  "Data" => [data_block("income", "application_person_income_in", deduction).merge!("personid" => @concern_role_id.to_s, "icid" => $icid, "incomeid" => @incomeid)]
    
-#    }
+   }
 
-# puts "Application deduction In: #{application_person_deduction_in_payload}"
-# @application_person_deduction_in = payload_post(application_person_deduction_in_payload)
-# end
-# end
+puts "Application deduction In: #{application_person_deduction_in_payload}"
+@application_person_deduction_in = payload_post(application_person_deduction_in_payload)
+@incomeid +=1
+end
+end
 #************************************************************************************
 
 #*********************************Relationships*****************************
