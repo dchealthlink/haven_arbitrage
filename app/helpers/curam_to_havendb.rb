@@ -15,6 +15,11 @@ module Store
 
   extend Publish
 
+#adding req_type from IC payload structure to finapp_in table for projected eligibility
+def req_type(req_type)
+@req_type = req_type
+end
+
 def payload_post(payload)
   @payload = payload
    post_payload = @payload.to_s.gsub("=>", ":")
@@ -284,7 +289,7 @@ application_in_payload = {
  "Action" => "INSERT",
  "Location" => "application_in",
  "xaid" => "#{SecureRandom.uuid}",
- "Data" => [data_block("application", "application_in", @curam_xml)]
+ "Data" => [data_block("application", "application_in", @curam_xml).merge!("reqtype" => @req_type)]
 
 }
 
