@@ -271,6 +271,20 @@ application_in_payload = {
 @curam_xml.xpath("//curam_applicant").each_with_index do |applicant, applicant_num|
 
    @concern_role_id = applicant.search("concern_role_id").text.to_s 
+
+
+@curam_xml.search("pdc_applicant").each do |pdc_person|
+  
+  if @concern_role_id == pdc_person.search("concern_role_id").text.to_s 
+    ic_and_pdc_person = "<curam_applicant>"+ applicant.children.to_s + pdc_person.children.to_s + "</curam_applicant>"
+    applicant = Nokogiri::XML(ic_and_pdc_person) 
+  end
+
+end
+
+
+
+
 application_person_in_payload = {
 
  "Action" => "INSERT",
