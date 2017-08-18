@@ -31,7 +31,6 @@ def payload_post(payload)
       $icid =  JSON.parse(application_in_res.body)["Return"].first["icid"]
    end
 
-   RestClient.post('newsafehaven.dcmic.org/external_log.php', post_payload)
    $LOG.info("#{application_in_res}\n\n")
 
    curam_incomplete_app_check
@@ -113,32 +112,6 @@ def curam_inconsistent_app_check
   end
 end
   
-
-
-def validation_log   
-
-payload = {
-
-"action" => "INSERT", 
-"Location" => "external_log", 
-"xaid" => "value", 
-"keyindex" => "integrated_case_reference",
-"keyvalue" => @curam_xml.xpath("//integrated_case_reference").text,
-"keytype" => "Notification",
-"keyresultid" => $icid,
-"status" => "Success",
-"keytimestamp" => Time.now,
-"queuename" => "email-out",
-"apprefnum" => @curam_xml.xpath("//AppCaseRef").text.to_s,
-"requesttype" => "Sent",
-"Data" => [ "payload" => @curam_raw_xml ]
-
-}
-
-puts "validation log: #{payload.to_s.gsub("=>", ":")}"
-application_in_res = RestClient.post('newsafehaven.dcmic.org/arb_input_wrapper.php', payload.to_s.gsub("=>", ":"), {content_type: :"application/xml", accept: :"application/json"})
-application_in_res.body
-end
 
 
 def log_curam_intake
@@ -228,17 +201,11 @@ elsif sv == "" #|| sv == "default"
 
 else
   payload = "Error: Record not Fount on app xlate table with values --> SI:curam, TO:haven, ST:#{st}, TT:#{tt}, SF:#{sf}, SV:#{sv}"
-  error_log(payload)
   return ""
   end
 
 end
 
-
-def error_log(payload)
-$LOG.info("Payload:*******#{payload}")
-res = RestClient.post('newsafehaven.dcmic.org/external_log.php', payload)
-end 
 
 
 def data_block(st, tt, records)
@@ -289,7 +256,7 @@ application_in_payload = {
  "Action" => "INSERT",
  "Location" => "application_in",
  "xaid" => "#{SecureRandom.uuid}",
- "Data" => [data_block("application", "application_in", @curam_xml).merge!("reqtype" => @req_type)]
+ "Data" => [(@req_type != nil ? data_block("application", "application_in", @curam_xml).merge!("reqtype" => @req_type) : data_block("application", "application_in", @curam_xml))]
 
 }
 
