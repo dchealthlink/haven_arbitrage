@@ -3,7 +3,7 @@ require './config/secret.rb'
 require "./app/validations/xml_validator.rb"
 require "./app/notifications/slack_notifier.rb"
 Dir["./app/helpers/*.rb"].each {|file| require file }
-$LOG = Logger.new('./log/log_file.log', 'monthly')
+#$LOG = Logger.new('./log/log_file.log', 'monthly')
 # require "./app/helpers/publish_to_ea.rb"
 # require "./app/helpers/ea_to_haven.rb"
 
@@ -22,11 +22,11 @@ end
 	def ea_translate
 	  ch = create_channel(EA_RABBIT_AUTH[:host], EA_RABBIT_AUTH[:vhost], EA_RABBIT_AUTH[:port], EA_RABBIT_AUTH[:user], EA_RABBIT_AUTH[:password])
       q = ch.queue(RABBIT_QUEUES[:ea_payload], durable: true)
-      $LOG.info("[*] Waiting for messages on Queue:#{RABBIT_QUEUES[:ea_payload]}. To exit press CTRL+C")
+      $EA_LOG.info("[*] Waiting for messages on Queue:#{RABBIT_QUEUES[:ea_payload]}. To exit press CTRL+C")
 
 	begin
 	  q.subscribe(:manual_ack => false, :block => true) do |delivery_info, properties, body|
-	  	$LOG.info("Received: delivery_info:  #{delivery_info}\nproperties:  #{properties}\nbody:  #{body}\n")
+	  	$EA_LOG.info("Received: delivery_info:  #{delivery_info}\nproperties:  #{properties}\nbody:  #{body}\n")
 	  	# puts "properties class is #{properties.to_hash.class}"
 	  	# puts "properties inspect: #{properties.to_hash.inspect}"
 	  	# exit
@@ -41,7 +41,7 @@ end
 	   		Slack_it.new.good_ea_intake(body)
 	    EA_translate.new.to_haven(body, properties.to_hash)
 	    #ch.ack(delivery_info.delivery_tag)
-	    $LOG.info("[x] Finished with EA to Haven translation")
+	    $EA_LOG.info("[x] Finished with EA to Haven translation")
 		end	
 	  end
 	    

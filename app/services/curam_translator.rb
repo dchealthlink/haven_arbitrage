@@ -28,17 +28,17 @@ end
 	def translate
 	  ch = create_channel(HAVEN_RABBIT_AUTH[:host], HAVEN_RABBIT_AUTH[:vhost], HAVEN_RABBIT_AUTH[:port], HAVEN_RABBIT_AUTH[:user], HAVEN_RABBIT_AUTH[:password])
       q = ch.queue(RABBIT_QUEUES[:curam_ic], durable: true)
-      $LOG.info("[*] Waiting for messages. on Queue: #{RABBIT_QUEUES[:curam_ic]} To exit press CTRL+C")
+      $CURAM_LOG.info("[*] Waiting for messages. on Queue: #{RABBIT_QUEUES[:curam_ic]} To exit press CTRL+C")
 
 		begin
 		  q.subscribe(:manual_ack => true, :block => true) do |delivery_info, properties, body|
-		  	$LOG.info("Received: delivery_info:  #{delivery_info}\nproperties:  #{properties}\nbody:  #{body}\n")
+		  	$CURAM_LOG.info("Received: delivery_info:  #{delivery_info}\nproperties:  #{properties}\nbody:  #{body}\n")
 		  	puts "message body: #{body}"
 		    parse_queue_message(body.to_s)
 		    puts "The IC value is #{@ic_hash[:ic]}"
 		    process
 		    ch.ack(delivery_info.delivery_tag)
-	  	    $LOG.info("[x] Finshed with Curam XML translation")
+	  	    $CURAM_LOG.info("[x] Finshed with Curam XML translation")
 		   end
 		rescue Interrupt => _
 		  #conn.close

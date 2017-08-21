@@ -6,7 +6,7 @@ require 'logger'
 require './app/models/application_xlate.rb'
 require './app/helpers/publish.rb'
 require "./app/notifications/slack_notifier.rb"
-$LOG = Logger.new('./log/curam.log', 'monthly')
+$CURAM_LOG = Logger.new('./log/curam.log', 'monthly')
 
 
 
@@ -23,7 +23,7 @@ end
 def payload_post(payload)
   @payload = payload
    post_payload = @payload.to_s.gsub("=>", ":")
-   $LOG.info("#{"*"*100}\n#{@payload}\n\n")
+   $CURAM_LOG.info("#{"*"*100}\n#{@payload}\n\n")
    application_in_res = RestClient.post('newsafehaven.dcmic.org/arb_input_wrapper.php', post_payload, {content_type: :"application/xml", accept: :"application/json"})
     
    if @payload["Location"] == "application_in" 
@@ -31,7 +31,7 @@ def payload_post(payload)
       $icid =  JSON.parse(application_in_res.body)["Return"].first["icid"]
    end
 
-   $LOG.info("#{application_in_res}\n\n")
+   $CURAM_LOG.info("#{application_in_res}\n\n")
 
    curam_incomplete_app_check
 end
@@ -230,7 +230,7 @@ records.search(field).children.first.text.to_s
 #puts "XML search for #{field}: #{records.search(field).text}"
 #records.search(field).text.to_s 
 rescue
-  $LOG.info("%%%%%%%%%% Unable to find the value for #{field} in curam xml%%%%%%%%%%%")
+  $CURAM_LOG.info("%%%%%%%%%% Unable to find the value for #{field} in curam xml%%%%%%%%%%%")
   return ""
 end
 end

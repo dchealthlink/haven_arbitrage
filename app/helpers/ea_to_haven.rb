@@ -5,7 +5,7 @@ require './config/secret.rb'
 require "./app/models/application_xlate.rb"
 require "./app/helpers/publish_to_ea.rb"
 require "./app/notifications/slack_notifier.rb"
-$LOG = Logger.new('./log/log_file.log', 'monthly')
+$EA_LOG = Logger.new('./log/ea.log', 'monthly')
 
 
 
@@ -86,7 +86,7 @@ end # process method end
 
 def ea_payload_post(payload)
 file_input_wrapper_response = RestClient.post('newsafehaven.dcmic.org/file_input_wrapper.php', payload)
-$LOG.info("***********************\n\n#{file_input_wrapper_response.body}\n**********************\n\n")
+$EA_LOG.info("***********************\n\n#{file_input_wrapper_response.body}\n**********************\n\n")
 puts "file_input_wrapper_response: #{file_input_wrapper_response.body}"
 response_hash = JSON.parse(file_input_wrapper_response.body)
 puts "response_hash: #{response_hash}"
@@ -98,7 +98,7 @@ elsif response_hash.keys.include?("Success")
 	payload = {"finAppId"=>@faa_id}.to_s.gsub("=>", ":")
 	puts "file_input_wrapper_response payload: #{payload}"
 	finapp_system_wrapper_response = RestClient.post('newsafehaven.dcmic.org/finapp_system_wrapper.php', payload)
-	$LOG.info("***********************\n\n#{finapp_system_wrapper_response.body}\n**********************\n\n")
+	$EA_LOG.info("***********************\n\n#{finapp_system_wrapper_response.body}\n**********************\n\n")
 end	
 
 end # ea_payload_post method end
@@ -512,7 +512,7 @@ filer_type.uniq.each {|x| arr << x}
 #add rabbitmq headers to finapp in fields
 arr.concat(add_headers_to_finapp_in)
 
-$LOG.info("***********************\n\nThe Holy moly Big Array:\n #{arr.inspect}\n**********************\n\n")
+$EA_LOG.info("***********************\n\nThe Holy moly Big Array:\n #{arr.inspect}\n**********************\n\n")
 
 
 
@@ -532,7 +532,7 @@ end
 
 @post_payload = @payload_str + "\n\n" 
 
-$LOG.info("***********************\n\npayload:\n #{@post_payload}\n**********************\n\n")
+$EA_LOG.info("***********************\n\npayload:\n #{@post_payload}\n**********************\n\n")
 
 translated_hash = {}
 translated_hash[:payload] = @post_payload
@@ -581,7 +581,7 @@ payload = {
 }
 
 application_in_res = RestClient.post('newsafehaven.dcmic.org/external_log_test.php', payload.to_s.gsub("=>", ":"), {content_type: :"application/json", accept: :"application/json"})
-$LOG.info("EA payload logged to external_log table with response status: #{application_in_res.code} \n payload: #{payload }")
+$EA_LOG.info("EA payload logged to external_log table with response status: #{application_in_res.code} \n payload: #{payload }")
 application_in_res.body
 end #log_ea_intake  end
 
