@@ -4,7 +4,7 @@ require 'savon'
 require 'nokogiri'
 require './config/secret.rb'
 
-$LOG = Logger.new('./log/curam.log', 'monthly')
+$CURAM_LOG = Logger.new('./log/curam.log', 'monthly')
 
 
 module Curam_ESB_Service
@@ -30,7 +30,7 @@ message = { "WL5G3N3:ICIDParameters" => { "WL5G3N3:IntegratedCasereference_ID" =
 
 response = client.call(:process, message: message)
 
-$LOG.info("XML recieved from curam for IC:#{ic}\n#{Nokogiri::XML(response.xml.to_s).to_xml}")
+$CURAM_LOG.info("XML recieved from curam for IC:#{ic}\n#{Nokogiri::XML(response.xml.to_s).to_xml}")
 
 response.xml
 end	
