@@ -11,19 +11,21 @@ set :views, Proc.new { File.join(root, "views") }
 
 
   get '/' do
-    "Welcome to Arbitrage.........!"
+    "Welcome to Translation world.........!"
   end
 
  # run!
 
  get '/curam_log' do
- 	@log = File.read("#{Dir.pwd}"+"/log/log_file.log")
- 	erb :view_log
+ 	send_file ("#{Dir.pwd}"+"/log/curam.log")
  end
 
  get '/ea_log' do
- @log =  File.read("#{Dir.pwd}"+"/log/log_file.log")
- 	erb :view_log
+ 	send_file ("#{Dir.pwd}"+"/log/ea.log")
+ end
+
+ get '/log' do
+  erb :log
  end
 
 end

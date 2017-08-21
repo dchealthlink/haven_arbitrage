@@ -1,7 +1,7 @@
 require "bunny"
 require "json"
 require "./config/secret.rb"
-$LOG = Logger.new('./log/log_file.log', 'monthly')
+$EA_LOG = Logger.new('./log/ea.log', 'monthly')
 
 
 class Publish_EA
@@ -23,7 +23,7 @@ class Publish_EA
       message = { error_message: error_message.to_s }.to_json
       @exchange.publish(message, :routing_key => EA_RABBIT_AUTH[:routing_key], :persistant => true, :content_type=>"application/octet-stream", :headers => @headers, :correlation_id => @properties[:correlation_id], :timestamp => Time.now.to_i, :app_id => @properties[:app_id])
    	@conn.close
-      $LOG.debug("Invalid/Inconsistent XML payload with Error messages: #{error_message} \nand published message back to EA with headers:#{@headers}")
+      $EA_LOG.debug("Invalid/Inconsistent XML payload with Error messages: #{error_message} \nand published message back to EA with headers:#{@headers}")
    end
 
 
