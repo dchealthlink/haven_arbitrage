@@ -12,10 +12,8 @@ set :views, Proc.new { File.join(root, "views") }
 
 
   get '/' do
-    "Welcome to Translation world.........!"
+    erb :root
   end
-
- # run!
 
  get '/curam_log' do
  	send_file ("#{Dir.pwd}"+"/log/curam.log")
@@ -25,16 +23,13 @@ set :views, Proc.new { File.join(root, "views") }
  	send_file ("#{Dir.pwd}"+"/log/ea.log")
  end
 
- get '/log' do
-  erb :log
- end
 
  get '/curam_pull' do
- 	puts params.inspect
- 	curam_pull = Curam_ESB_Service.call(params["ic"])
- 	@curam_pull = Nokogiri::XML(response.xml.to_s).to_xml
 	erb :curam_pull
-
+	 curam_pull =  (params['ic'] != nil) ? Curam_ESB_Service.call(params['ic']) : nil
+	 @curam_pull = Nokogiri::XML(curam_pull.to_s).to_xml 
+	erb :curam_pull		
  end
+
 
 end
