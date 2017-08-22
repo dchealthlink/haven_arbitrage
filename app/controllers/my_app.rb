@@ -10,6 +10,11 @@ set :root, File.join(File.dirname(__FILE__), '..')
 # sets the view directory correctly
 set :views, Proc.new { File.join(root, "views") } 
 
+use Rack::Auth::Basic, "Protected Area" do |username, password|
+  username == BASIC_AUTH[:user] && password == BASIC_AUTH[:password]
+end
+
+
 
   get '/' do
     erb :root
