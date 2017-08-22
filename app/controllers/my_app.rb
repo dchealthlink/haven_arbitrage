@@ -1,5 +1,5 @@
 require "sinatra/base"
-
+require "./app/helpers/curam_esb_call"
 
 
 class MyApp < Sinatra::Base
@@ -26,6 +26,13 @@ set :views, Proc.new { File.join(root, "views") }
 
  get '/log' do
   erb :log
+ end
+
+ get '/curam_pull' do
+ 	puts params.inspect
+ 	@curam_pull = Curam_ESB_Service.call(params["ic"])
+	erb :curam_pull
+
  end
 
 end

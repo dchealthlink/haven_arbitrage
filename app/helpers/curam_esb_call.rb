@@ -17,7 +17,7 @@ savon_config = {
   :ssl_version => :TLSv1,
   :namespaces => ESB_SERVICE_NAMESPACE,
   :log => true,
-  :logger => $LOG,
+  :logger => $CURAM_LOG,
   :wsse_auth => CURAM_ESB_SOAP[:usercredentials]
 #   ssl_cert_file: "/home/arbitrage/esb_certs/esb_root.pem",
 #   ssl_cert_key_file: "/home/arbitrage/esb_certs/esb_key.pem",
