@@ -1,5 +1,5 @@
 # Using Savon version 2
-gem 'savon', '=2.11.1'
+gem 'savon', '=2.11.2'
 require 'savon'
 require 'nokogiri'
 require './config/secret.rb'
