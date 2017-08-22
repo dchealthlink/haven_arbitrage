@@ -256,7 +256,7 @@ application_in_payload = {
  "Action" => "INSERT",
  "Location" => "application_in",
  "xaid" => "#{SecureRandom.uuid}",
- "Data" => [(@req_type != nil ? data_block("application", "application_in", @curam_xml).merge!("reqtype" => @req_type) : data_block("application", "application_in", @curam_xml))]
+ "Data" => [((@req_type != nil && @req_type != "") ? data_block("application", "application_in", @curam_xml).merge!("reqtype" => @req_type) : data_block("application", "application_in", @curam_xml))]
 
 }
 
