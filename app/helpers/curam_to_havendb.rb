@@ -191,7 +191,7 @@ elsif sv == "" #|| sv == "default"
   if check_flag.any?
     default_field = check_flag.select { |value| value.siflag == "N" && value.sourcevalue == "default" }
     unless default_field.empty?
-    sv = default_field.first.defaultvalue
+    sv = customize_default_value(default_field.first.defaultvalue)
     @notice << "source value missing for <#{sf}> so assuming the value : <#{sv}>"
     puts "source value missing for <#{sf}> so assuming the value : <#{sv}>"
   end
@@ -206,7 +206,12 @@ else
 
 end
 
+def customize_default_value(value) 
+default_value = value
+default_value = ("9" + 9.times.map{rand(10)}.join) if value == "10 digit random acrn"
 
+default_value
+end
 
 def data_block(st, tt, records)
 arr = @application_xlate.select { |value| value[:targettype] == tt }

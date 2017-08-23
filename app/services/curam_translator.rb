@@ -33,9 +33,7 @@ end
 		begin
 		  q.subscribe(:manual_ack => true, :block => true) do |delivery_info, properties, body|
 		  	$CURAM_LOG.info("Received: delivery_info:  #{delivery_info}\nproperties:  #{properties}\nbody:  #{body}\n")
-		  	puts "message body: #{body}"
 		    parse_queue_message(body.to_s)
-		    puts "The IC value is #{@ic_hash[:ic]}"
 		    process
 		    ch.ack(delivery_info.delivery_tag)
 	  	    $CURAM_LOG.info("[x] Finshed with Curam XML translation")
