@@ -5,6 +5,7 @@ require "./app/helpers/curam_esb_call"
 
 class MyApp < Sinatra::Base
 
+enable :sessions
 	# sets root as the parent-directory of the current file
 set :root, File.join(File.dirname(__FILE__), '..')
 # sets the view directory correctly
