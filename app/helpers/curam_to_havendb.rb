@@ -208,7 +208,7 @@ end
 
 def customize_default_value(value) 
 default_value = value
-default_value = ("9" + 9.times.map{rand(10)}.join) if value == "10 digit random acrn"
+default_value = ("9" + 8.times.map{rand(10)}.join) if value == "10 digit random acrn"
 
 default_value
 end
