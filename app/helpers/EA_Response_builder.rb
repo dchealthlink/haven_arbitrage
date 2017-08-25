@@ -21,7 +21,7 @@ extend Publish
         ic_payload =   {"icNumber" => curam_res.xpath("//integrated_case_reference").text}.to_s.gsub("=>", ":")
         begin
         puts "calling: enroll_app_system_wrapper"
-        haven_response = RestClient.post('newsafehaven.dcmic.org/enroll_app_system_wrapper.php', ic_payload, {content_type: :"application/json", accept: :"application/json"})
+        haven_response = RestClient.post('newsafehaven.dcmic.org/enroll_app_system_wrapper.php', acrn_payload, {content_type: :"application/json", accept: :"application/json"})
         $CURAM_LOG.info("#{haven_response}")
         
        
