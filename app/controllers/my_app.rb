@@ -30,7 +30,6 @@ end
 
 
  get '/curam_pull' do
-	erb :curam_pull
 	 curam_pull =  (params['ic'] != nil) ? Curam_ESB_Service.call(params['ic']) : nil
 	 @curam_pull = Nokogiri::XML(curam_pull.to_s).to_xml 
 	erb :curam_pull		
