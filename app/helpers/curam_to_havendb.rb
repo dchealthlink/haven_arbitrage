@@ -98,7 +98,7 @@ def curam_inconsistent_app_check
                 \n\n\n\n\n Thanks,\n -Arbitrage"
     email_notice(message)
     Slack_it.new.notify(message)
-    validation_log
+    #validation_log
     application_in_status("inconsistent")
     return false
   # elsif curam_response.xpath("//relationship").text.include?("Is Unrelated to")
