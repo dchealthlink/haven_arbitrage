@@ -17,3 +17,4 @@
 /tmp
 config/secret.rb
 config/database.yml
+app/helpers/hcl.rb

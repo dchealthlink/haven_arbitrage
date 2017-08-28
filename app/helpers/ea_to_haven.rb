@@ -1,7 +1,11 @@
 require 'nokogiri'
 require 'rest-client'
+require 'json'
+require './config/secret.rb'
 require "./app/models/application_xlate.rb"
-$LOG = Logger.new('./log/log_file.log', 'monthly')
+require "./app/helpers/publish_to_ea.rb"
+require "./app/notifications/slack_notifier.rb"
+$EA_LOG = Logger.new('./log/ea.log', 'monthly')
 
 
 
@@ -80,23 +84,30 @@ end
 
 end # process method end
 
-def ea_payload_post(payload, faa_id)
+def ea_payload_post(payload)
 file_input_wrapper_response = RestClient.post('newsafehaven.dcmic.org/file_input_wrapper.php', payload)
-$LOG.info("***********************\n\n#{file_input_wrapper_response}\n**********************\n\n")
-puts "file_input_wrapper_response: #{file_input_wrapper_response}"
-unless file_input_wrapper_response.body.include?("Error description:")
-	payload = {"finAppId"=>faa_id}.to_s.gsub("=>", ":")
+$EA_LOG.info("***********************\n\n#{file_input_wrapper_response.body}\n**********************\n\n")
+puts "file_input_wrapper_response: #{file_input_wrapper_response.body}"
+response_hash = JSON.parse(file_input_wrapper_response.body)
+puts "response_hash: #{response_hash}"
+if response_hash.keys.include?("ERROR")
+	Publish_EA.new(@properties.to_hash).error_intake_status(response_hash["ERROR"], "501")
+	Slack_it.new.notify(response_hash["ERROR"])
+elsif response_hash.keys.include?("Success")
+	Slack_it.new.notify("Loaded successfully in to Finapp in tables")
+	payload = {"finAppId"=>@faa_id}.to_s.gsub("=>", ":")
 	puts "file_input_wrapper_response payload: #{payload}"
 	finapp_system_wrapper_response = RestClient.post('newsafehaven.dcmic.org/finapp_system_wrapper.php', payload)
-	$LOG.info("***********************\n\n#{finapp_system_wrapper_response.body}\n**********************\n\n")
+	$EA_LOG.info("***********************\n\n#{finapp_system_wrapper_response.body}\n**********************\n\n")
 end	
 
 end # ea_payload_post method end
 
 
-def to_haven(rabbitmq_message)
+def to_haven(rabbitmq_message, properties)
+@properties = properties
 payload_hash = translate_ea_to_haven(rabbitmq_message)
-ea_payload_post(payload_hash[:payload], payload_hash[:faa_id])
+ea_payload_post(payload_hash[:payload])
 end
 
 
@@ -115,18 +126,18 @@ end   # strip_tag_value methods end
 def translate_ea_to_haven(ea_xml_string)
 
 @ea_xml = Nokogiri::XML(ea_xml_string)
-
+@ea_xml.remove_namespaces!    # to remove all namespaces from xml docs
 #@xlate = Application_xlate.where(["sourcein=? and targetout=?", "ea", "haven"])
 @xlate = Application_xlate.where(["sourcein=? and targetout=? and status=?", "ea", "haven", "A"]).to_a
 
 arr = []
 @tablename_array = []
-
+faa_id = @ea_xml.at("//financial_assistance_application/id/id")
+@faa_id = strip_tag_value(faa_id.content)
+log_ea_intake
 
 @ea_xml.at("//financial_assistance_application").element_children.each do |faa|        #faa and has 3 children(id, benchmark_plan, assistance_tax_households)
 
-	faa_id = @ea_xml.at("//financial_assistance_application/id/id")
-	@faa_id = strip_tag_value(faa_id.content)
 	puts "The tag name is: #{faa.name} and path is: #{faa.path}"
 
 x = faa.path
@@ -422,8 +433,18 @@ puts "I am in assistance_tax_households block and the path: #{faa.path}"
 						  athm_block.element_children.each do |deductions|       #children of "individual"
 
 						  	deductions.element_children.each do |deduction|
+						  		if deduction.name == "deduction_id"
+						  			@deduction_id = strip_tag_value(deduction.content)
+						  		end
+
+						  		if deduction.name == "deduction_type"
+						  			@deduction_type = strip_tag_value(deduction.content)
+						  		end
+						  	end
+
+						  	deductions.element_children.each do |deduction|
 							  	x = deduction.path
-								process(deduction, x, @xlate, arr, faa_id, @person_id, @income_id, @income_type, nil)
+								process(deduction, x, @xlate, arr, faa_id, @person_id, @deduction_id, @deduction_type, nil)
 							end
 						  end
 						end
@@ -444,7 +465,7 @@ puts "I am in assistance_tax_households block and the path: #{faa.path}"
 							  	puts "The benefit insurance ID: #{@insurance_id.inspect}**************"
 							    end
 
-						  		if benefit.name == "benefit_type"
+						  		if benefit.name == "benefit_insurance_type"
 							  	@insurance_type = strip_tag_value(benefit.content)
 							  	puts "The benefit type: #{@insurance_type.inspect}**************"
 							    end
@@ -488,8 +509,10 @@ filer_type.delete_if {|x| x[3]==nil}
 
 filer_type.uniq.each {|x| arr << x}
 
+#add rabbitmq headers to finapp in fields
+arr.concat(add_headers_to_finapp_in)
 
-$LOG.info("***********************\n\nThe Holy moly Big Array:\n #{arr.inspect}\n**********************\n\n")
+$EA_LOG.info("***********************\n\nThe Holy moly Big Array:\n #{arr.inspect}\n**********************\n\n")
 
 
 
@@ -509,7 +532,7 @@ end
 
 @post_payload = @payload_str + "\n\n" 
 
-$LOG.info("***********************\n\npayload:\n #{@post_payload}\n**********************\n\n")
+$EA_LOG.info("***********************\n\npayload:\n #{@post_payload}\n**********************\n\n")
 
 translated_hash = {}
 translated_hash[:payload] = @post_payload
@@ -517,6 +540,50 @@ translated_hash[:faa_id]  = @faa_id
 translated_hash
 
 end # translate_ea_to_haven method end
+
+def add_headers_to_finapp_in
+#[finapp_id, tablename, person_id, id, type, tbd, key, value]
+
+#sample properties data properties = {:content_type=>"application/octet-stream", :headers=>{"submitted_timestamp"=>"2017-07-13 14:57:09 -0400", "correlation_id"=>"22236845cc70442fa0039c5b20c23c28", "family_id"=>"5967bebed7c2dc110200000a", "application_id"=>"5967beddd7c2dc0bd1000000"}, :delivery_mode=>2, :priority=>0, :correlation_id=>"22236845cc70442fa0039c5b20c23c28", :timestamp=>"2017-07-13 14:57:09 -0400", :app_id=>"enroll"}
+
+#*********Note: please confirm naming conventions of keys
+headers_mapping = { "correlation_id" => "correlationid", "family_id" => "familyid", "primary_applicant_id" => "primaryapplicantid", "havenic_id" => "havenicid", "ecase_id" => "ecaseid"}
+
+@headers = @properties[:headers]	
+finapp_in_headers = []
+headers_mapping.each do |key, value|
+	if @properties.keys.include?(key) || @headers.keys.include?(key)
+	result = @properties[key] || @headers[key]
+	finapp_in_headers << [@faa_id, "finapp_in", nil, nil, nil, nil, value, result]	
+	end #if end
+end #do end
+return finapp_in_headers
+end #add_headers_to_finapp_in  end
+
+
+def log_ea_intake
+
+payload = {
+
+"action" => "INSERT", 
+"Location" => "external_log", 
+"xaid" => "value", 
+"keyindex" => "finapp_id",
+"keyvalue" => @faa_id,
+"keytype" => "Log",
+"keyresultid" => 1,  #This value is hardcoded to 1 but need to change in the future ref Tom. Ex: $icid in curam translator 
+"status" => "Success",
+"keytimestamp" => Time.now,
+"queuename" => RABBIT_QUEUES[:ea_payload],
+"requesttype" => "Sent",
+"xmlpayload" => "#{@ea_xml}" 
+
+}
+
+application_in_res = RestClient.post('newsafehaven.dcmic.org/external_log_test.php', payload.to_s.gsub("=>", ":"), {content_type: :"application/json", accept: :"application/json"})
+$EA_LOG.info("EA payload logged to external_log table with response status: #{application_in_res.code} \n payload: #{payload }")
+application_in_res.body
+end #log_ea_intake  end
 
 
 end # module end

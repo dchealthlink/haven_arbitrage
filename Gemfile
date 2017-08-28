@@ -6,7 +6,7 @@ gem 'nokogiri', '~> 1.7.0', '< 1.7.1'
 gem 'rest-client'
 gem 'json'
 gem "bunny", ">= 2.6.3"
-gem 'savon', '~> 1.0'
+gem 'savon', '~> 2.11.2'#, '>= 2.11.2'
 gem 'rake'
 gem "sinatra-activerecord"
 gem 'mysql2', '~> 0.4.5'

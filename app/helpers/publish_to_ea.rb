@@ -1,7 +1,7 @@
 require "bunny"
 require "json"
 require "./config/secret.rb"
-$LOG = Logger.new('./log/log_file.log', 'monthly')
+$EA_LOG = Logger.new('./log/ea.log', 'monthly')
 
 
 class Publish_EA
@@ -12,18 +12,21 @@ class Publish_EA
       @channel = @conn.create_channel
       @properties = properties
       @headers = @properties[:headers]
+      #@queue = @channel.queue(RABBIT_QUEUES[:ea_intake_error], durable: true)
+      @exchange = @channel.fanout( EA_RABBIT_AUTH[:exchange], :durable => true)
    end
 
 
-   def error_intake_status(error_message)
-   	queue = @channel.queue(RABBIT_QUEUES[:ea_intake_error], durable: true)
-      @headers.merge!(return_status: 422, meaning: "Unprocessable Entity")
+   def error_intake_status(error_message, return_status)
+      @headers.merge!(return_status: "#{return_status}")
       @headers["submitted_timestamp"] = @headers["submitted_timestamp"].to_s  #RabbitMQ conplaints on non string time stamp
-      message = { Error_Message: error_message.to_s }.to_json
-      queue.publish(message, :persistant => true, :content_type=>"application/octet-stream", :headers => @headers, :correlation_id => @properties[:correlation_id], :timestamp => Time.now.to_i, :app_id => @properties[:app_id])
+      message = { error_message: error_message.to_s }.to_json
+      @exchange.publish(message, :routing_key => EA_RABBIT_AUTH[:routing_key], :persistant => true, :content_type=>"application/octet-stream", :headers => @headers, :correlation_id => @properties[:correlation_id], :timestamp => Time.now.to_i, :app_id => @properties[:app_id])
    	@conn.close
-      $LOG.debug("Invalid XML with Error messages: #{error_message} \nand published message to EA back with headers:#{@headers}")
+      $EA_LOG.debug("Invalid/Inconsistent XML payload with Error messages: #{error_message} \nand published message back to EA with headers:#{@headers}")
    end
+
+
 
 end
 
