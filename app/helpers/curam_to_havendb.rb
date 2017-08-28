@@ -83,7 +83,6 @@ end
                 \n\n\n Thanks,\n -Arbitrage"
     email_notice(message)
     Slack_it.new.notify(message)
-    validation_log
   end
 #puts "tf: #{tf}"
 return tf.all? {|value| value == true} ? true : false
@@ -98,14 +97,12 @@ def curam_inconsistent_app_check
                 \n\n\n\n\n Thanks,\n -Arbitrage"
     email_notice(message)
     Slack_it.new.notify(message)
-    #validation_log
     application_in_status("inconsistent")
     return false
   # elsif curam_response.xpath("//relationship").text.include?("Is Unrelated to")
   #    message = "Hello\n\n IC: #{ic}\n\nError: There is an unrelated applicant in this application and we don't like that.
   #               \n\n\n\n\n Thanks,\n -Arbitrage"
   #   email_notice(message)
-  #   validation_log
   #   return false
   else
     return true
