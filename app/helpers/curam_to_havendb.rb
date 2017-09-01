@@ -214,10 +214,18 @@ def data_block(st, tt, records)
 arr = @application_xlate.select { |value| value[:targettype] == tt }
 hs = {}
 #puts "In fields:  #{arr}" 
-arr.uniq { |value| (value.targetfield && value.sourcefield) }.each do |val|
+arr.uniq { |value| (value.targetfield) }.each do |val|
+  #arr.uniq { |value| (value.targetfield && value.sourcefield) }.each do |val|
   
+    
   source_value = curam_xlate(st, tt, val.sourcefield, val.targetfield, xml_search(records, val.sourcefield))
   hs[val.targetfield.to_s] = source_value if (source_value != "" && source_value.class.to_s != "Array")
+
+# Dirty patch for deductions type field
+  if val.targetfield == "incometype"
+    source_value = curam_xlate(st, tt, "type", val.targetfield, xml_search(records, "type"))
+    hs[val.targetfield.to_s] = source_value if (source_value != "" && source_value.class.to_s != "Array")
+  end
   
 end
 hs.merge!("icnumber" => @integrated_case_reference)
