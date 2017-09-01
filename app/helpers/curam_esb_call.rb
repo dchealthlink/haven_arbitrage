@@ -3,6 +3,7 @@ gem 'savon', '=2.11.2'
 require 'savon'
 require 'nokogiri'
 require './config/secret.rb'
+require "./app/notifications/slack_notifier.rb"
 
 $CURAM_LOG = Logger.new('./log/curam.log', 'monthly')
 
@@ -28,11 +29,14 @@ client = Savon.client(savon_config)
 #The name space is changing boy be careful ex: ns1 , v1, WL5G3N3
 message = { "WL5G3N3:ICIDParameters" => { "WL5G3N3:IntegratedCasereference_ID" => "#{ic.to_s}" } }
 
-response = client.call(:process, message: message)
-
-$CURAM_LOG.info("XML recieved from curam for IC:#{ic}\n#{Nokogiri::XML(response.xml.to_s).to_xml}")
-
-response.xml
+begin 
+	response = client.call(:process, message: message)
+rescue 
+	Slack_it.new.notify("IC:#{ic}  No data from curam (500/Timeout/No data). Time to Yell at ESB :trumpet:")
+else
+	$CURAM_LOG.info("XML recieved from curam for IC:#{ic}\n#{Nokogiri::XML(response.xml.to_s).to_xml}")
+	response.xml
+end
 end	
 
 
