@@ -18,6 +18,8 @@ savon_config = {
   :ssl_version => :TLSv1,
   :namespaces => ESB_SERVICE_NAMESPACE,
   :log => true,
+  :open_timeout => 300,
+  :read_timeout => 300,
   :logger => $CURAM_LOG,
   :wsse_auth => CURAM_ESB_SOAP[:usercredentials]
 #   ssl_cert_file: "/home/arbitrage/esb_certs/esb_root.pem",
@@ -32,13 +34,17 @@ message = { "WL5G3N3:ICIDParameters" => { "WL5G3N3:IntegratedCasereference_ID" =
 begin 
 	response = client.call(:process, message: message)
 rescue 
-	Slack_it.new.notify("IC:#{ic}  No data from curam (500/Timeout/No data). Time to Yell at ESB :trumpet:")
+	Slack_it.new.notify("IC:#{ic}  No data from curam (500/Timeout/No data). @mamatha.burujukati @rahulch :trumpet:")
 else
 	$CURAM_LOG.info("XML recieved from curam for IC:#{ic}\n#{Nokogiri::XML(response.xml.to_s).to_xml}")
 	response.xml
-end
-end	
+end #begin end
+end	#method end
 
+
+def self.empty_xml_check
+#pending
+end
 
 # def self.haven(ic)
 # 	payload = {"icNumber" => "#{ic.to_s}"}.to_s.gsub("=>", ":")
