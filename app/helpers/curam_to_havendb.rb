@@ -147,7 +147,7 @@ end
 def curam_xlate(st, tt, sf, tf, sv)
   
   check_flag =  @application_xlate.select do |value|
-     value[:targettype] == "#{tt}" && value[:sourcefield] == "#{sf}" && value[:targetfield] == "#{tf}"
+     value[:targettype] == "#{tt}" && value[:sourcefield].downcase == "#{sf}".downcase && value[:targetfield] == "#{tf}"
   end
 
 if check_flag.any? && sv != ""
@@ -167,7 +167,7 @@ if check_flag.any? && sv != ""
 check_flag.each do |value|
    case value.siflag 
     when "N"
-    xlate =  check_flag.select { |value| value[:targettype] == "#{tt}" && value[:sourcefield] == "#{sf}" && value[:sourcevalue] == "#{sv}" }
+    xlate =  check_flag.select { |value| value[:targettype] == "#{tt}" && value[:sourcefield].downcase == "#{sf}".downcase && value[:sourcevalue].downcase == "#{sv}".downcase }
       #value[:sourcein] == "curam" && value[:targetout] == "haven" && value[:targettype] == "application_person_income_in" && value[:sourcefield] == "end_date" && value[:sourcevalue] == "2017-12-01"
     #   puts xlate.inspect
     # #puts "----------------#{sv}---------------------------"
