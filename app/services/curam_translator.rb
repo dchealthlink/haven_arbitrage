@@ -39,7 +39,7 @@ end
 	  	    $CURAM_LOG.info("[x] Finshed with Curam XML translation")
 		   end
 		rescue Interrupt => _
-		  #conn.close
+		  conn.close
 		end	
 	end
 
