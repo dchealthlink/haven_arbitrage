@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class EA_translate - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+  var index_rel_prefix = "./";
+</script>
+
+<script src="./js/jquery.js"></script>
+<script src="./js/darkfish.js"></script>
+
+<link href="./css/fonts.css" rel="stylesheet">
+<link href="./css/rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link"><a href="Object.html">Object</a>
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-i-add_headers_to_finapp_in">#add_headers_to_finapp_in</a>
+    
+    <li ><a href="#method-i-ea_payload_post">#ea_payload_post</a>
+    
+    <li ><a href="#method-i-log_ea_intake">#log_ea_intake</a>
+    
+    <li ><a href="#method-i-process">#process</a>
+    
+    <li ><a href="#method-i-strip_tag_value">#strip_tag_value</a>
+    
+    <li ><a href="#method-i-to_haven">#to_haven</a>
+    
+    <li ><a href="#method-i-translate_ea_to_haven">#translate_ea_to_haven</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-EA_translate">
+  <h1 id="class-EA_translate" class="class">
+    class EA_translate
+  </h1>
+
+  <section class="description">
+    
+  </section>
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-add_headers_to_finapp_in" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">add_headers_to_finapp_in</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="add_headers_to_finapp_in-source">
+            <pre><span class="ruby-comment"># File app/helpers/ea_to_haven.rb, line 544</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">add_headers_to_finapp_in</span>
+<span class="ruby-comment">#[finapp_id, tablename, person_id, id, type, tbd, key, value]</span>
+
+<span class="ruby-comment">#sample properties data properties = {:content_type=&gt;&quot;application/octet-stream&quot;, :headers=&gt;{&quot;submitted_timestamp&quot;=&gt;&quot;2017-07-13 14:57:09 -0400&quot;, &quot;correlation_id&quot;=&gt;&quot;22236845cc70442fa0039c5b20c23c28&quot;, &quot;family_id&quot;=&gt;&quot;5967bebed7c2dc110200000a&quot;, &quot;application_id&quot;=&gt;&quot;5967beddd7c2dc0bd1000000&quot;}, :delivery_mode=&gt;2, :priority=&gt;0, :correlation_id=&gt;&quot;22236845cc70442fa0039c5b20c23c28&quot;, :timestamp=&gt;&quot;2017-07-13 14:57:09 -0400&quot;, :app_id=&gt;&quot;enroll&quot;}</span>
+
+<span class="ruby-comment">#*********Note: please confirm naming conventions of keys</span>
+<span class="ruby-identifier">headers_mapping</span> = { <span class="ruby-string">&quot;correlation_id&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;correlationid&quot;</span>, <span class="ruby-string">&quot;family_id&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;familyid&quot;</span>, <span class="ruby-string">&quot;primary_applicant_id&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;primaryapplicantid&quot;</span>, <span class="ruby-string">&quot;havenic_id&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;havenicid&quot;</span>, <span class="ruby-string">&quot;ecase_id&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;ecaseid&quot;</span>}
+
+<span class="ruby-ivar">@headers</span> = <span class="ruby-ivar">@properties</span>[<span class="ruby-value">:headers</span>]        
+<span class="ruby-identifier">finapp_in_headers</span> = []
+<span class="ruby-identifier">headers_mapping</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword">if</span> <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">key</span>) <span class="ruby-operator">||</span> <span class="ruby-ivar">@headers</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">key</span>)
+        <span class="ruby-identifier">result</span> = <span class="ruby-ivar">@properties</span>[<span class="ruby-identifier">key</span>] <span class="ruby-operator">||</span> <span class="ruby-ivar">@headers</span>[<span class="ruby-identifier">key</span>]
+        <span class="ruby-identifier">finapp_in_headers</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-ivar">@faa_id</span>, <span class="ruby-string">&quot;finapp_in&quot;</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">result</span>] 
+        <span class="ruby-keyword">end</span> <span class="ruby-comment">#if end</span>
+<span class="ruby-keyword">end</span> <span class="ruby-comment">#do end</span>
+<span class="ruby-keyword">return</span> <span class="ruby-identifier">finapp_in_headers</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-ea_payload_post" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">ea_payload_post</span><span
+            class="method-args">(payload)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="ea_payload_post-source">
+            <pre><span class="ruby-comment"># File app/helpers/ea_to_haven.rb, line 87</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">ea_payload_post</span>(<span class="ruby-identifier">payload</span>)
+<span class="ruby-identifier">file_input_wrapper_response</span> = <span class="ruby-constant">RestClient</span>.<span class="ruby-identifier">post</span>(<span class="ruby-string">&#39;newsafehaven.dcmic.org/file_input_wrapper.php&#39;</span>, <span class="ruby-identifier">payload</span>)
+<span class="ruby-identifier">$EA_LOG</span>.<span class="ruby-identifier">info</span>(<span class="ruby-node">&quot;***********************\n\n#{file_input_wrapper_response.body}\n**********************\n\n&quot;</span>)
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;file_input_wrapper_response: #{file_input_wrapper_response.body}&quot;</span>
+<span class="ruby-identifier">response_hash</span> = <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">file_input_wrapper_response</span>.<span class="ruby-identifier">body</span>)
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;response_hash: #{response_hash}&quot;</span>
+<span class="ruby-keyword">if</span> <span class="ruby-identifier">response_hash</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;ERROR&quot;</span>)
+        <span class="ruby-constant">Publish_EA</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">to_hash</span>).<span class="ruby-identifier">error_intake_status</span>(<span class="ruby-identifier">response_hash</span>[<span class="ruby-string">&quot;ERROR&quot;</span>], <span class="ruby-string">&quot;501&quot;</span>)
+        <span class="ruby-constant">Slack_it</span>.<span class="ruby-identifier">new</span>.<span class="ruby-identifier">notify</span>(<span class="ruby-identifier">response_hash</span>[<span class="ruby-string">&quot;ERROR&quot;</span>])
+<span class="ruby-keyword">elsif</span> <span class="ruby-identifier">response_hash</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;Success&quot;</span>)
+        <span class="ruby-constant">Slack_it</span>.<span class="ruby-identifier">new</span>.<span class="ruby-identifier">notify</span>(<span class="ruby-string">&quot;Loaded successfully in to Finapp in tables&quot;</span>)
+        <span class="ruby-identifier">payload</span> = {<span class="ruby-string">&quot;finAppId&quot;</span>=<span class="ruby-operator">&gt;</span><span class="ruby-ivar">@faa_id</span>}.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-string">&quot;=&gt;&quot;</span>, <span class="ruby-string">&quot;:&quot;</span>)
+        <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;file_input_wrapper_response payload: #{payload}&quot;</span>
+        <span class="ruby-identifier">finapp_system_wrapper_response</span> = <span class="ruby-constant">RestClient</span>.<span class="ruby-identifier">post</span>(<span class="ruby-string">&#39;newsafehaven.dcmic.org/finapp_system_wrapper.php&#39;</span>, <span class="ruby-identifier">payload</span>)
+        <span class="ruby-identifier">$EA_LOG</span>.<span class="ruby-identifier">info</span>(<span class="ruby-node">&quot;***********************\n\n#{finapp_system_wrapper_response.body}\n**********************\n\n&quot;</span>)
+<span class="ruby-keyword">end</span>     
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-log_ea_intake" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">log_ea_intake</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="log_ea_intake-source">
+            <pre><span class="ruby-comment"># File app/helpers/ea_to_haven.rb, line 564</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">log_ea_intake</span>
+
+<span class="ruby-identifier">payload</span> = {
+
+<span class="ruby-string">&quot;action&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;INSERT&quot;</span>, 
+<span class="ruby-string">&quot;Location&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;external_log&quot;</span>, 
+<span class="ruby-string">&quot;xaid&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;value&quot;</span>, 
+<span class="ruby-string">&quot;keyindex&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;finapp_id&quot;</span>,
+<span class="ruby-string">&quot;keyvalue&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@faa_id</span>,
+<span class="ruby-string">&quot;keytype&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;Log&quot;</span>,
+<span class="ruby-string">&quot;keyresultid&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>,  <span class="ruby-comment">#This value is hardcoded to 1 but need to change in the future ref Tom. Ex: $icid in curam translator </span>
+<span class="ruby-string">&quot;status&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;Success&quot;</span>,
+<span class="ruby-string">&quot;keytimestamp&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>,
+<span class="ruby-string">&quot;queuename&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">RABBIT_QUEUES</span>[<span class="ruby-value">:ea_payload</span>],
+<span class="ruby-string">&quot;requesttype&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;Sent&quot;</span>,
+<span class="ruby-string">&quot;xmlpayload&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;#{@ea_xml}&quot;</span> 
+
+}
+
+<span class="ruby-identifier">application_in_res</span> = <span class="ruby-constant">RestClient</span>.<span class="ruby-identifier">post</span>(<span class="ruby-string">&#39;newsafehaven.dcmic.org/external_log_test.php&#39;</span>, <span class="ruby-identifier">payload</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-string">&quot;=&gt;&quot;</span>, <span class="ruby-string">&quot;:&quot;</span>), {<span class="ruby-identifier">content_type</span><span class="ruby-operator">:</span> <span class="ruby-value">:&quot;application/json&quot;</span>, <span class="ruby-identifier">accept</span><span class="ruby-operator">:</span> <span class="ruby-value">:&quot;application/json&quot;</span>})
+<span class="ruby-identifier">$EA_LOG</span>.<span class="ruby-identifier">info</span>(<span class="ruby-node">&quot;EA payload logged to external_log table with response status: #{application_in_res.code} \n payload: #{payload }&quot;</span>)
+<span class="ruby-identifier">application_in_res</span>.<span class="ruby-identifier">body</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-process" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">process</span><span
+            class="method-args">(faa, path, xlate, arr, faa_id, pid, id, type, tbd)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="process-source">
+            <pre><span class="ruby-comment"># File app/helpers/ea_to_haven.rb, line 17</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">process</span>(<span class="ruby-identifier">faa</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-identifier">pid</span>, <span class="ruby-identifier">id</span>, <span class="ruby-identifier">type</span>, <span class="ruby-identifier">tbd</span>)
+<span class="ruby-ivar">@xlate</span> = <span class="ruby-identifier">xlate</span>
+<span class="ruby-identifier">x</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/.\d./</span>, <span class="ruby-string">&quot;&quot;</span>)   <span class="ruby-comment">#remove [1] like in path ex: /financial_assistance_application/assistance_tax_households/assistance_tax_household/assistance_tax_household_members/assistance_tax_household_member[1]</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;path x: #{x}&quot;</span>
+<span class="ruby-identifier">sourcetype</span> = <span class="ruby-identifier">x</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot;/&quot;</span>)
+<span class="ruby-identifier">sourcetype</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">&quot;&quot;</span>)
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;#{sourcetype.inspect}&quot;</span>
+
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">sourcetype</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+                <span class="ruby-identifier">sourcefield</span> = <span class="ruby-identifier">sourcetype</span>.<span class="ruby-identifier">delete_at</span>(<span class="ruby-value">-1</span>)
+        <span class="ruby-keyword">end</span>
+ 
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;The source type:#{sourcetype.join(&quot;.&quot;)}\nThe source field:#{sourcefield}&quot;</span>
+<span class="ruby-comment">#record = @xlate.where([&quot;sourcetype=? and sourcefield=? and status=?&quot;, &quot;#{sourcetype.join(&quot;.&quot;)}&quot;, &quot;#{sourcefield}&quot;, &quot;A&quot;])</span>
+<span class="ruby-identifier">record</span> = <span class="ruby-ivar">@xlate</span>.<span class="ruby-identifier">select</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">rec</span><span class="ruby-operator">|</span> (<span class="ruby-identifier">rec</span>.<span class="ruby-identifier">sourcetype</span> <span class="ruby-operator">==</span> <span class="ruby-node">&quot;#{sourcetype.join(&quot;.&quot;)}&quot;</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">rec</span>.<span class="ruby-identifier">sourcefield</span> <span class="ruby-operator">==</span> <span class="ruby-node">&quot;#{sourcefield}&quot;</span>)}
+
+        <span class="ruby-keyword">unless</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">empty?</span>
+        <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;The record: #{record.inspect}&quot;</span>
+
+        <span class="ruby-ivar">@sv</span> = {}
+                <span class="ruby-keyword">if</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">siflag</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;Y&quot;</span>
+                        <span class="ruby-ivar">@sv</span>[<span class="ruby-identifier">record</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">targetfield</span>] = <span class="ruby-identifier">strip_tag_value</span>(<span class="ruby-identifier">faa</span>.<span class="ruby-identifier">content</span>)
+                        <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Source value from siflag Y:#{@sv}&quot;</span>
+
+                <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">siflag</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;N&quot;</span>
+                        <span class="ruby-comment">#rec = @xlate.where([&quot;sourcetype=? and sourcefield=? and sourcevalue=?&quot;, &quot;#{sourcetype.join(&quot;.&quot;)}&quot;, &quot;#{sourcefield}&quot;, &quot;#{strip_tag_value(faa.content)}&quot;])</span>
+                        <span class="ruby-identifier">rec</span> = <span class="ruby-ivar">@xlate</span>.<span class="ruby-identifier">select</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">rec</span><span class="ruby-operator">|</span> (<span class="ruby-identifier">rec</span>.<span class="ruby-identifier">sourcetype</span> <span class="ruby-operator">==</span> <span class="ruby-node">&quot;#{sourcetype.join(&quot;.&quot;)}&quot;</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">rec</span>.<span class="ruby-identifier">sourcefield</span> <span class="ruby-operator">==</span> <span class="ruby-node">&quot;#{sourcefield}&quot;</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">rec</span>.<span class="ruby-identifier">sourcevalue</span> <span class="ruby-operator">==</span> <span class="ruby-node">&quot;#{strip_tag_value(faa.content)}&quot;</span>)}
+                        <span class="ruby-identifier">rec_group</span> = <span class="ruby-identifier">rec</span>.<span class="ruby-identifier">group_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:targetfield</span>)
+
+                        <span class="ruby-identifier">rec_group</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span><span class="ruby-operator">|</span>
+                                <span class="ruby-identifier">recx</span> = <span class="ruby-identifier">rec_group</span>[<span class="ruby-identifier">key</span>].<span class="ruby-identifier">first</span>
+                        
+                        <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;recx**: #{recx}&quot;</span>
+
+                        <span class="ruby-comment"># if recx.targetvalue.include?(&quot;#&quot;)</span>
+                        <span class="ruby-comment">#    recx_targetvalue = recx.targetvalue.split(&quot;#&quot;)[-1]</span>
+                        <span class="ruby-comment"># else</span>
+                        <span class="ruby-comment">#    recx_targetvalue = recx.targetvalue</span>
+                        <span class="ruby-comment"># end</span>
+
+                        <span class="ruby-ivar">@sv</span>[<span class="ruby-identifier">recx</span>.<span class="ruby-identifier">targetfield</span>] = <span class="ruby-identifier">strip_tag_value</span>(<span class="ruby-identifier">recx</span>.<span class="ruby-identifier">targetvalue</span>)
+                        <span class="ruby-comment">#sv &lt;&lt; recx.targetvalue #unless recx.empty?</span>
+                        <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Source value from siflag N:#{@sv}&quot;</span>
+                    <span class="ruby-keyword">end</span>
+                <span class="ruby-keyword">end</span>
+
+        <span class="ruby-keyword">end</span>
+
+
+<span class="ruby-identifier">finapp_id</span> = <span class="ruby-identifier">strip_tag_value</span>(<span class="ruby-identifier">faa_id</span>.<span class="ruby-identifier">content</span>)
+<span class="ruby-identifier">tablename</span> = <span class="ruby-identifier">record</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">targettype</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">empty?</span>
+<span class="ruby-identifier">person_id</span> = <span class="ruby-identifier">pid</span>
+<span class="ruby-identifier">id</span> = <span class="ruby-identifier">id</span>
+<span class="ruby-identifier">type</span> = <span class="ruby-identifier">type</span>
+<span class="ruby-identifier">tbd</span> = <span class="ruby-identifier">tbd</span>
+<span class="ruby-identifier">fieldname</span> = <span class="ruby-identifier">record</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">targetfield</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">empty?</span>
+
+
+<span class="ruby-ivar">@tablename_array</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">tablename</span> <span class="ruby-keyword">if</span> (<span class="ruby-operator">!</span><span class="ruby-ivar">@tablename_array</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">tablename</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">tablename</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>)
+
+<span class="ruby-keyword">if</span> <span class="ruby-ivar">@sv</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> 
+<span class="ruby-ivar">@sv</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">!=</span> (<span class="ruby-keyword">nil</span> <span class="ruby-operator">||</span> <span class="ruby-string">&quot;&quot;</span>)
+                <span class="ruby-identifier">arr</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-identifier">finapp_id</span>, <span class="ruby-identifier">tablename</span>, <span class="ruby-identifier">person_id</span>, <span class="ruby-identifier">id</span>, <span class="ruby-identifier">type</span>, <span class="ruby-identifier">tbd</span>, <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span>]
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>     
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-strip_tag_value" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">strip_tag_value</span><span
+            class="method-args">(value)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="strip_tag_value-source">
+            <pre><span class="ruby-comment"># File app/helpers/ea_to_haven.rb, line 114</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">strip_tag_value</span>(<span class="ruby-identifier">value</span>)
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-node">&quot;#&quot;</span>)
+                <span class="ruby-identifier">stripped_value</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">split</span>(<span class="ruby-node">&quot;#&quot;</span>)[<span class="ruby-value">-1</span>]
+        <span class="ruby-keyword">else</span>
+                <span class="ruby-identifier">stripped_value</span> = <span class="ruby-identifier">value</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-to_haven" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">to_haven</span><span
+            class="method-args">(rabbitmq_message, properties)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="to_haven-source">
+            <pre><span class="ruby-comment"># File app/helpers/ea_to_haven.rb, line 107</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_haven</span>(<span class="ruby-identifier">rabbitmq_message</span>, <span class="ruby-identifier">properties</span>)
+<span class="ruby-ivar">@properties</span> = <span class="ruby-identifier">properties</span>
+<span class="ruby-identifier">payload_hash</span> = <span class="ruby-identifier">translate_ea_to_haven</span>(<span class="ruby-identifier">rabbitmq_message</span>)
+<span class="ruby-identifier">ea_payload_post</span>(<span class="ruby-identifier">payload_hash</span>[<span class="ruby-value">:payload</span>])
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-translate_ea_to_haven" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">translate_ea_to_haven</span><span
+            class="method-args">(ea_xml_string)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>****************************</p>
+          
+          
+
+          
+          <div class="method-source-code" id="translate_ea_to_haven-source">
+            <pre><span class="ruby-comment"># File app/helpers/ea_to_haven.rb, line 126</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">translate_ea_to_haven</span>(<span class="ruby-identifier">ea_xml_string</span>)
+
+<span class="ruby-ivar">@ea_xml</span> = <span class="ruby-constant">Nokogiri</span><span class="ruby-operator">::</span><span class="ruby-constant">XML</span>(<span class="ruby-identifier">ea_xml_string</span>)
+<span class="ruby-ivar">@ea_xml</span>.<span class="ruby-identifier">remove_namespaces!</span>    <span class="ruby-comment"># to remove all namespaces from xml docs</span>
+<span class="ruby-comment">#@xlate = Application_xlate.where([&quot;sourcein=? and targetout=?&quot;, &quot;ea&quot;, &quot;haven&quot;])</span>
+<span class="ruby-ivar">@xlate</span> = <span class="ruby-constant">Application_xlate</span>.<span class="ruby-identifier">where</span>([<span class="ruby-string">&quot;sourcein=? and targetout=? and status=?&quot;</span>, <span class="ruby-string">&quot;ea&quot;</span>, <span class="ruby-string">&quot;haven&quot;</span>, <span class="ruby-string">&quot;A&quot;</span>]).<span class="ruby-identifier">to_a</span>
+
+<span class="ruby-identifier">arr</span> = []
+<span class="ruby-ivar">@tablename_array</span> = []
+<span class="ruby-identifier">faa_id</span> = <span class="ruby-ivar">@ea_xml</span>.<span class="ruby-identifier">at</span>(<span class="ruby-string">&quot;//financial_assistance_application/id/id&quot;</span>)
+<span class="ruby-ivar">@faa_id</span> = <span class="ruby-identifier">strip_tag_value</span>(<span class="ruby-identifier">faa_id</span>.<span class="ruby-identifier">content</span>)
+<span class="ruby-identifier">log_ea_intake</span>
+
+<span class="ruby-ivar">@ea_xml</span>.<span class="ruby-identifier">at</span>(<span class="ruby-string">&quot;//financial_assistance_application&quot;</span>).<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">faa</span><span class="ruby-operator">|</span>        <span class="ruby-comment">#faa and has 3 children(id, benchmark_plan, assistance_tax_households)</span>
+
+        <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;The tag name is: #{faa.name} and path is: #{faa.path}&quot;</span>
+
+<span class="ruby-identifier">x</span> = <span class="ruby-identifier">faa</span>.<span class="ruby-identifier">path</span>
+
+<span class="ruby-identifier">process</span>(<span class="ruby-identifier">faa</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+
+
+<span class="ruby-comment">#********************************Benchmark Plan start******************************</span>
+<span class="ruby-keyword">if</span> <span class="ruby-identifier">faa</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;benchmark_plan&quot;</span>
+        <span class="ruby-identifier">faa</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">bm</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">x</span> = <span class="ruby-identifier">bm</span>.<span class="ruby-identifier">path</span>
+                <span class="ruby-identifier">process</span>(<span class="ruby-identifier">bm</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-ivar">@bm_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+        
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">bm</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;carrier&quot;</span>
+                <span class="ruby-identifier">bm</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">bm_carrier</span><span class="ruby-operator">|</span>
+                        <span class="ruby-identifier">x</span> = <span class="ruby-identifier">bm_carrier</span>.<span class="ruby-identifier">path</span>
+                        <span class="ruby-identifier">process</span>(<span class="ruby-identifier">bm_carrier</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-ivar">@bm_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+
+                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">bm_carrier</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;id&quot;</span>
+                                <span class="ruby-identifier">bm_carrier</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">bm_carrier_id</span><span class="ruby-operator">|</span>
+                                <span class="ruby-identifier">x</span> = <span class="ruby-identifier">bm_carrier_id</span>.<span class="ruby-identifier">path</span>
+                                <span class="ruby-identifier">process</span>(<span class="ruby-identifier">bm_carrier_id</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-ivar">@bm_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+                                <span class="ruby-keyword">end</span>
+                        <span class="ruby-keyword">end</span>
+                <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">end</span>
+
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">bm</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;id&quot;</span>
+                <span class="ruby-identifier">bm</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">bm_id</span><span class="ruby-operator">|</span>
+
+                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">bm_id</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;id&quot;</span>
+                                <span class="ruby-ivar">@bm_id</span> = <span class="ruby-identifier">strip_tag_value</span>(<span class="ruby-identifier">bm_id</span>.<span class="ruby-identifier">content</span>)
+                        <span class="ruby-keyword">end</span>
+                        <span class="ruby-identifier">x</span> = <span class="ruby-identifier">bm_id</span>.<span class="ruby-identifier">path</span>
+                        <span class="ruby-identifier">process</span>(<span class="ruby-identifier">bm_id</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-ivar">@bm_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+                <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+<span class="ruby-comment">#****************************Benchmark Plan end**************************************</span>
+
+<span class="ruby-keyword">if</span> <span class="ruby-identifier">faa</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;assistance_tax_households&quot;</span>
+
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;I am in assistance_tax_households block and the path: #{faa.path}&quot;</span>
+        <span class="ruby-identifier">faa</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">ath</span><span class="ruby-operator">|</span>    <span class="ruby-comment">#count 1</span>
+
+                <span class="ruby-identifier">ath</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">block</span><span class="ruby-operator">|</span>  <span class="ruby-comment">#count 4 id, primary_applicant_id, assistance_tax_household_members, eligibility_determinations</span>
+                
+                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;id&quot;</span>
+                        <span class="ruby-identifier">block</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">id_block</span><span class="ruby-operator">|</span>
+
+                                <span class="ruby-keyword">if</span> <span class="ruby-identifier">id_block</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;id&quot;</span>
+                                        <span class="ruby-ivar">@assistance_tax_household_id</span> = <span class="ruby-identifier">strip_tag_value</span>(<span class="ruby-identifier">id_block</span>.<span class="ruby-identifier">content</span>)
+                                <span class="ruby-keyword">end</span>
+
+                                <span class="ruby-identifier">x</span> = <span class="ruby-identifier">id_block</span>.<span class="ruby-identifier">path</span>
+                                <span class="ruby-identifier">process</span>(<span class="ruby-identifier">id_block</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+                                <span class="ruby-keyword">end</span>
+                        <span class="ruby-keyword">end</span>
+
+                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;primary_applicant_id&quot;</span>
+                                <span class="ruby-identifier">block</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">p_app_id</span><span class="ruby-operator">|</span>
+                                <span class="ruby-identifier">x</span> = <span class="ruby-identifier">p_app_id</span>.<span class="ruby-identifier">path</span>
+                                <span class="ruby-identifier">process</span>(<span class="ruby-identifier">p_app_id</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+                                <span class="ruby-keyword">end</span>
+                        <span class="ruby-keyword">end</span>
+
+                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;assistance_tax_household_members&quot;</span>
+                                <span class="ruby-identifier">block</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">athm</span><span class="ruby-operator">|</span>                                       <span class="ruby-comment">#children of &quot;assistance_tax_household_members&quot;</span>
+                                        <span class="ruby-identifier">athm</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">athm_block</span><span class="ruby-operator">|</span>                         <span class="ruby-comment">#children of &quot;assistance_tax_household_member&quot;</span>
+
+                                                <span class="ruby-comment">#for non block elements</span>
+                                                <span class="ruby-keyword">if</span> <span class="ruby-identifier">athm_block</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;tax_filer_type&quot;</span>
+                                                        <span class="ruby-identifier">x</span> = <span class="ruby-identifier">athm_block</span>.<span class="ruby-identifier">path</span>
+                                                        <span class="ruby-identifier">process</span>(<span class="ruby-identifier">athm_block</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-ivar">@assistance_tax_household_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+                                                        <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;The tax no is: #{@assistance_tax_household_id}&quot;</span>
+                                                <span class="ruby-keyword">else</span>
+                                                          <span class="ruby-identifier">x</span> = <span class="ruby-identifier">athm_block</span>.<span class="ruby-identifier">path</span>
+                                                        <span class="ruby-identifier">process</span>(<span class="ruby-identifier">athm_block</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+                                                 <span class="ruby-keyword">end</span>
+
+
+                                                <span class="ruby-keyword">if</span> <span class="ruby-identifier">athm_block</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;individual&quot;</span>                        
+                                                  <span class="ruby-identifier">athm_block</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">individual_blocks</span><span class="ruby-operator">|</span>       <span class="ruby-comment">#children of &quot;individual&quot;</span>
+
+                                                          <span class="ruby-comment">#for non block elements</span>
+                                                          <span class="ruby-identifier">x</span> = <span class="ruby-identifier">individual_blocks</span>.<span class="ruby-identifier">path</span>
+                                                        <span class="ruby-identifier">process</span>(<span class="ruby-identifier">individual_blocks</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+
+                                                                 <span class="ruby-keyword">if</span> <span class="ruby-identifier">individual_blocks</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;id&quot;</span>
+                                                                        <span class="ruby-identifier">individual_blocks</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">individual_id</span><span class="ruby-operator">|</span>  <span class="ruby-comment">##children of &quot;id block&quot;</span>
+                                                                                <span class="ruby-identifier">x</span> = <span class="ruby-identifier">individual_id</span>.<span class="ruby-identifier">path</span>
+                                                                                <span class="ruby-identifier">process</span>(<span class="ruby-identifier">individual_id</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+                                                                        <span class="ruby-keyword">end</span>
+                                                                <span class="ruby-keyword">end</span>     
+
+                                                        <span class="ruby-comment">#*******************************Person block start ************************************</span>
+
+                                                                <span class="ruby-keyword">if</span> <span class="ruby-identifier">individual_blocks</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;person&quot;</span>
+
+                                                                        <span class="ruby-identifier">individual_blocks</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">individual_person</span><span class="ruby-operator">|</span>    <span class="ruby-comment">#children of person block</span>
+                                                                                <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;individual_person block name: #{individual_person.name}&quot;</span>
+                                                                                 <span class="ruby-identifier">x</span> = <span class="ruby-identifier">individual_person</span>.<span class="ruby-identifier">path</span>
+                                                                                 <span class="ruby-identifier">process</span>(<span class="ruby-identifier">individual_person</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+
+                                                                                <span class="ruby-identifier">individual_person</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">person_block</span><span class="ruby-operator">|</span>
+                                                                                        <span class="ruby-identifier">x</span> = <span class="ruby-identifier">person_block</span>.<span class="ruby-identifier">path</span>
+                                                                                        <span class="ruby-identifier">process</span>(<span class="ruby-identifier">person_block</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+
+                                                                                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">person_block</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;id&quot;</span>
+                                                                                                <span class="ruby-ivar">@person_id</span> = <span class="ruby-identifier">strip_tag_value</span>(<span class="ruby-identifier">person_block</span>.<span class="ruby-identifier">content</span>)
+                                                                                        <span class="ruby-keyword">end</span>
+
+                                                                                <span class="ruby-keyword">end</span>
+                                                                                <span class="ruby-comment">#*****************Addresses***********************************</span>
+                                                                                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">individual_person</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;addresses&quot;</span>
+                                                                                                <span class="ruby-identifier">individual_person</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">address</span><span class="ruby-operator">|</span>
+                                                                                                        <span class="ruby-identifier">address</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">address_element</span><span class="ruby-operator">|</span>
+
+                                                                                                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">address_element</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;type&quot;</span>  
+                                                                                                                <span class="ruby-ivar">@address_type</span> = <span class="ruby-identifier">strip_tag_value</span>(<span class="ruby-identifier">address_element</span>.<span class="ruby-identifier">content</span>)
+                                                                                                        <span class="ruby-keyword">end</span>
+                                                                                                        <span class="ruby-identifier">x</span> = <span class="ruby-identifier">address_element</span>.<span class="ruby-identifier">path</span>
+                                                                                                 <span class="ruby-identifier">process</span>(<span class="ruby-identifier">address_element</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-ivar">@address_type</span>, <span class="ruby-keyword">nil</span>)
+                                                                                                     <span class="ruby-keyword">end</span>
+                                                                                             <span class="ruby-keyword">end</span>
+                                                                                         <span class="ruby-keyword">end</span>
+                                                                                <span class="ruby-comment">#***********Emails*****************************************</span>
+
+                                                                                         <span class="ruby-keyword">if</span> <span class="ruby-identifier">individual_person</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;emails&quot;</span>
+                                                                                                <span class="ruby-identifier">individual_person</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">emails</span><span class="ruby-operator">|</span>
+                                                                                                        <span class="ruby-identifier">emails</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">email_element</span><span class="ruby-operator">|</span>
+
+                                                                                                          <span class="ruby-keyword">if</span> <span class="ruby-identifier">email_element</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;type&quot;</span>  
+                                                                                                                <span class="ruby-ivar">@email_type</span> = <span class="ruby-identifier">strip_tag_value</span>(<span class="ruby-identifier">email_element</span>.<span class="ruby-identifier">content</span>)
+                                                                                                          <span class="ruby-keyword">end</span>
+                                                                                                        <span class="ruby-identifier">x</span> = <span class="ruby-identifier">email_element</span>.<span class="ruby-identifier">path</span>
+                                                                                                 <span class="ruby-identifier">process</span>(<span class="ruby-identifier">email_element</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-ivar">@email_type</span>, <span class="ruby-keyword">nil</span>)
+                                                                                                     <span class="ruby-keyword">end</span>
+                                                                                             <span class="ruby-keyword">end</span>
+                                                                                         <span class="ruby-keyword">end</span>
+                                                                                <span class="ruby-comment">#*********************Phones********************************</span>
+
+                                                                                         <span class="ruby-keyword">if</span> <span class="ruby-identifier">individual_person</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;phones&quot;</span>
+                                                                                                <span class="ruby-identifier">individual_person</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">phones</span><span class="ruby-operator">|</span>
+                                                                                                        <span class="ruby-identifier">phones</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">phone_element</span><span class="ruby-operator">|</span>
+
+                                                                                                                <span class="ruby-keyword">if</span> <span class="ruby-identifier">phone_element</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;type&quot;</span>   
+                                                                                                                <span class="ruby-ivar">@phone_type</span> = <span class="ruby-identifier">strip_tag_value</span>(<span class="ruby-identifier">phone_element</span>.<span class="ruby-identifier">content</span>)
+                                                                                                                <span class="ruby-keyword">end</span>
+                                                                                                        <span class="ruby-identifier">x</span> = <span class="ruby-identifier">phone_element</span>.<span class="ruby-identifier">path</span>
+                                                                                                 <span class="ruby-identifier">process</span>(<span class="ruby-identifier">phone_element</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-ivar">@phone_type</span>, <span class="ruby-keyword">nil</span>)
+                                                                                                     <span class="ruby-keyword">end</span>
+                                                                                             <span class="ruby-keyword">end</span>
+                                                                                         <span class="ruby-keyword">end</span>
+                                                                                        
+                                                                                
+                                                                        <span class="ruby-keyword">end</span>            <span class="ruby-comment">#children do block of person</span>
+
+                                                                <span class="ruby-keyword">end</span>             <span class="ruby-comment"># if block of person</span>
+                                                        <span class="ruby-comment">#***************************************Person block end ***************************************</span>
+
+                                                        <span class="ruby-comment">#*********************person relationship start*********************************</span>
+
+
+                                                                <span class="ruby-keyword">if</span> <span class="ruby-identifier">individual_blocks</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;person_relationships&quot;</span>
+                                                                        <span class="ruby-identifier">individual_blocks</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">person_relationships</span><span class="ruby-operator">|</span>  <span class="ruby-comment">##children of &quot;id block&quot;</span>
+
+                                                                                <span class="ruby-identifier">person_relationships</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">person_relationship</span><span class="ruby-operator">|</span>
+                                                                                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">person_relationship</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;object_individual&quot;</span>
+                                                                                        <span class="ruby-identifier">person_relationship</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">object_individual</span><span class="ruby-operator">|</span>
+                                                                                                <span class="ruby-ivar">@cross_personid</span> = <span class="ruby-identifier">strip_tag_value</span>(<span class="ruby-identifier">object_individual</span>.<span class="ruby-identifier">content</span>)
+                                                                                                <span class="ruby-keyword">end</span> 
+                                                                                        <span class="ruby-keyword">end</span>
+                                                                                <span class="ruby-keyword">end</span>
+
+                                                                                <span class="ruby-identifier">person_relationships</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">person_relationship</span><span class="ruby-operator">|</span>
+                                                                                
+                                                                                <span class="ruby-identifier">x</span> = <span class="ruby-identifier">person_relationship</span>.<span class="ruby-identifier">path</span>
+                                                                                <span class="ruby-identifier">process</span>(<span class="ruby-identifier">person_relationship</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-ivar">@cross_personid</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+                                                                                
+                                                                                <span class="ruby-keyword">if</span> <span class="ruby-identifier">person_relationship</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;subject_individual&quot;</span>
+                                                                                        <span class="ruby-identifier">person_relationship</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">subject_individual</span><span class="ruby-operator">|</span>
+                                                                                                <span class="ruby-identifier">x</span> = <span class="ruby-identifier">subject_individual</span>.<span class="ruby-identifier">path</span>
+                                                                                                <span class="ruby-identifier">process</span>(<span class="ruby-identifier">subject_individual</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-ivar">@cross_personid</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+                                                                                        <span class="ruby-keyword">end</span>  
+                                                                                <span class="ruby-keyword">end</span>
+
+
+                                                                                <span class="ruby-keyword">if</span> <span class="ruby-identifier">person_relationship</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;object_individual&quot;</span>
+                                                                                        <span class="ruby-identifier">person_relationship</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">object_individual</span><span class="ruby-operator">|</span>
+                                                                                                <span class="ruby-identifier">x</span> = <span class="ruby-identifier">object_individual</span>.<span class="ruby-identifier">path</span>
+                                                                                                <span class="ruby-identifier">process</span>(<span class="ruby-identifier">object_individual</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-ivar">@cross_personid</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+                                                                                        <span class="ruby-keyword">end</span>  
+                                                                                <span class="ruby-keyword">end</span>
+
+
+                                                                                <span class="ruby-keyword">end</span>
+                                                                        <span class="ruby-keyword">end</span>
+                                                                <span class="ruby-keyword">end</span>
+
+                                                        <span class="ruby-comment">#**********************************person relationship end *************************</span>
+
+                                                        <span class="ruby-comment">#*********************************person demographics start*************************</span>
+
+                                                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">individual_blocks</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;person_demographics&quot;</span>
+                                                                <span class="ruby-identifier">individual_blocks</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">person_demographics</span><span class="ruby-operator">|</span>
+                                                                        <span class="ruby-identifier">x</span> = <span class="ruby-identifier">person_demographics</span>.<span class="ruby-identifier">path</span>
+                                                                        <span class="ruby-identifier">process</span>(<span class="ruby-identifier">person_demographics</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+
+                                                                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">person_demographics</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;tribal_info&quot;</span>
+                                                                                <span class="ruby-identifier">person_demographics</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">tribal_info</span><span class="ruby-operator">|</span>
+                                                                                        <span class="ruby-identifier">x</span> = <span class="ruby-identifier">tribal_info</span>.<span class="ruby-identifier">path</span>
+                                                                                        <span class="ruby-identifier">process</span>(<span class="ruby-identifier">tribal_info</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+                                                                                <span class="ruby-keyword">end</span>
+                                                                        <span class="ruby-keyword">end</span>
+                                                                <span class="ruby-keyword">end</span>
+                                                        <span class="ruby-keyword">end</span>
+                                                                        
+                                                        <span class="ruby-comment">#*********************************person demographics end*************************</span>
+
+                                                        <span class="ruby-comment">#*********************************person health start*************************</span>
+                                                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">individual_blocks</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;person_health&quot;</span>
+                                                                <span class="ruby-identifier">individual_blocks</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">person_health</span><span class="ruby-operator">|</span>
+                                                                        <span class="ruby-identifier">x</span> = <span class="ruby-identifier">person_health</span>.<span class="ruby-identifier">path</span>
+                                                                        <span class="ruby-identifier">process</span>(<span class="ruby-identifier">person_health</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+                                                                <span class="ruby-keyword">end</span>
+
+                                                        <span class="ruby-keyword">end</span>
+                                                        <span class="ruby-comment">#*********************************person health end*************************</span>
+
+
+                                                   <span class="ruby-keyword">end</span>    <span class="ruby-comment"># children do block of individual</span>
+
+                                                <span class="ruby-keyword">end</span>  <span class="ruby-comment"># if block individual</span>
+
+                                                <span class="ruby-comment">#*********************************Immigration information start*************************</span>
+                                                <span class="ruby-keyword">if</span> <span class="ruby-identifier">athm_block</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;immigration_information&quot;</span>                   
+                                                  <span class="ruby-identifier">athm_block</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">immigration_information</span><span class="ruby-operator">|</span>       <span class="ruby-comment">#children of &quot;individual&quot;</span>
+
+                                                          <span class="ruby-comment">#for non block elements</span>
+                                                                 <span class="ruby-identifier">x</span> = <span class="ruby-identifier">immigration_information</span>.<span class="ruby-identifier">path</span>
+                                                                <span class="ruby-identifier">process</span>(<span class="ruby-identifier">immigration_information</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+
+                                                                <span class="ruby-keyword">if</span> <span class="ruby-identifier">immigration_information</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;documents&quot;</span>
+                                                                        <span class="ruby-identifier">immigration_information</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">documents</span><span class="ruby-operator">|</span>
+                                                                                <span class="ruby-identifier">x</span> = <span class="ruby-identifier">documents</span>.<span class="ruby-identifier">path</span>
+                                                                                <span class="ruby-identifier">process</span>(<span class="ruby-identifier">documents</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+
+                                                                <span class="ruby-keyword">if</span> <span class="ruby-identifier">documents</span>.<span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;document_&quot;</span>)
+                                                                        <span class="ruby-identifier">documents</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">document_block</span><span class="ruby-operator">|</span>
+                                                                                <span class="ruby-identifier">x</span> = <span class="ruby-identifier">document_block</span>.<span class="ruby-identifier">path</span>
+                                                                        <span class="ruby-identifier">process</span>(<span class="ruby-identifier">document_block</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>, <span class="ruby-keyword">nil</span>)
+                                                                        <span class="ruby-keyword">end</span>
+                                                                <span class="ruby-keyword">end</span>
+                                                                <span class="ruby-keyword">end</span>
+                                                        <span class="ruby-keyword">end</span>
+                                                        <span class="ruby-keyword">end</span>
+                                                <span class="ruby-keyword">end</span>
+                                                <span class="ruby-comment">#*********************************Immigration information end*************************</span>
+
+                                                <span class="ruby-comment">#*********************************Income start*************************</span>
+                                                <span class="ruby-keyword">if</span> <span class="ruby-identifier">athm_block</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;incomes&quot;</span>                   
+                                                  <span class="ruby-identifier">athm_block</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">incomes</span><span class="ruby-operator">|</span>       <span class="ruby-comment">#children of &quot;individual&quot;</span>
+
+                                                          <span class="ruby-identifier">incomes</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">income</span><span class="ruby-operator">|</span>
+                                                                  <span class="ruby-keyword">if</span> <span class="ruby-identifier">income</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;income_id&quot;</span>
+                                                                          <span class="ruby-ivar">@income_id</span> = <span class="ruby-identifier">strip_tag_value</span>(<span class="ruby-identifier">income</span>.<span class="ruby-identifier">content</span>)
+                                                                  <span class="ruby-keyword">end</span>
+
+                                                                  <span class="ruby-keyword">if</span> <span class="ruby-identifier">income</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;income_type&quot;</span>
+                                                                          <span class="ruby-ivar">@income_type</span> = <span class="ruby-identifier">strip_tag_value</span>(<span class="ruby-identifier">income</span>.<span class="ruby-identifier">content</span>)
+                                                                  <span class="ruby-keyword">end</span>
+                                                          <span class="ruby-keyword">end</span>
+
+                                                          <span class="ruby-identifier">incomes</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">income</span><span class="ruby-operator">|</span>
+                                                                 <span class="ruby-identifier">x</span> = <span class="ruby-identifier">income</span>.<span class="ruby-identifier">path</span>
+                                                                <span class="ruby-identifier">process</span>(<span class="ruby-identifier">income</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-ivar">@income_id</span>, <span class="ruby-ivar">@income_type</span>, <span class="ruby-keyword">nil</span>)
+
+                                                                <span class="ruby-keyword">if</span> <span class="ruby-identifier">income</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;employer_address&quot;</span>
+                                                                        <span class="ruby-identifier">income</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">employer_address</span><span class="ruby-operator">|</span>
+                                                                                <span class="ruby-identifier">x</span> = <span class="ruby-identifier">employer_address</span>.<span class="ruby-identifier">path</span>
+                                                                                <span class="ruby-identifier">process</span>(<span class="ruby-identifier">employer_address</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-ivar">@income_id</span>, <span class="ruby-ivar">@income_type</span>, <span class="ruby-keyword">nil</span>)
+                                                                        <span class="ruby-keyword">end</span>
+                                                                <span class="ruby-keyword">end</span>
+                                                        <span class="ruby-keyword">end</span>
+                                                  <span class="ruby-keyword">end</span>
+                                                <span class="ruby-keyword">end</span>
+                                                <span class="ruby-comment">#*********************************Income end*************************</span>
+
+                                                <span class="ruby-comment">#*********************************deductions start*************************</span>
+                                                <span class="ruby-keyword">if</span> <span class="ruby-identifier">athm_block</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;deductions&quot;</span>                        
+                                                  <span class="ruby-identifier">athm_block</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">deductions</span><span class="ruby-operator">|</span>       <span class="ruby-comment">#children of &quot;individual&quot;</span>
+
+                                                          <span class="ruby-identifier">deductions</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">deduction</span><span class="ruby-operator">|</span>
+                                                                  <span class="ruby-keyword">if</span> <span class="ruby-identifier">deduction</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;deduction_id&quot;</span>
+                                                                          <span class="ruby-ivar">@deduction_id</span> = <span class="ruby-identifier">strip_tag_value</span>(<span class="ruby-identifier">deduction</span>.<span class="ruby-identifier">content</span>)
+                                                                  <span class="ruby-keyword">end</span>
+
+                                                                  <span class="ruby-keyword">if</span> <span class="ruby-identifier">deduction</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;deduction_type&quot;</span>
+                                                                          <span class="ruby-ivar">@deduction_type</span> = <span class="ruby-identifier">strip_tag_value</span>(<span class="ruby-identifier">deduction</span>.<span class="ruby-identifier">content</span>)
+                                                                  <span class="ruby-keyword">end</span>
+                                                          <span class="ruby-keyword">end</span>
+
+                                                          <span class="ruby-identifier">deductions</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">deduction</span><span class="ruby-operator">|</span>
+                                                                 <span class="ruby-identifier">x</span> = <span class="ruby-identifier">deduction</span>.<span class="ruby-identifier">path</span>
+                                                                <span class="ruby-identifier">process</span>(<span class="ruby-identifier">deduction</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-ivar">@deduction_id</span>, <span class="ruby-ivar">@deduction_type</span>, <span class="ruby-keyword">nil</span>)
+                                                        <span class="ruby-keyword">end</span>
+                                                  <span class="ruby-keyword">end</span>
+                                                <span class="ruby-keyword">end</span>
+                                                <span class="ruby-comment">#*********************************deduction end*************************</span>
+
+
+                                                <span class="ruby-comment">#*********************************benefits start*************************</span>
+
+                                                <span class="ruby-keyword">if</span> <span class="ruby-identifier">athm_block</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;benefits&quot;</span>  
+
+
+                                                  <span class="ruby-identifier">athm_block</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">benefits</span><span class="ruby-operator">|</span>       <span class="ruby-comment">#children of &quot;individual&quot;</span>
+
+                                                          <span class="ruby-identifier">benefits</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">benefit</span><span class="ruby-operator">|</span>
+
+                                                                  <span class="ruby-keyword">if</span> <span class="ruby-identifier">benefit</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;benefit_id&quot;</span>
+                                                                 <span class="ruby-ivar">@insurance_id</span> = <span class="ruby-identifier">strip_tag_value</span>(<span class="ruby-identifier">benefit</span>.<span class="ruby-identifier">content</span>)
+                                                                 <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;The benefit insurance ID: #{@insurance_id.inspect}**************&quot;</span>
+                                                            <span class="ruby-keyword">end</span>
+
+                                                                  <span class="ruby-keyword">if</span> <span class="ruby-identifier">benefit</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;benefit_insurance_type&quot;</span>
+                                                                 <span class="ruby-ivar">@insurance_type</span> = <span class="ruby-identifier">strip_tag_value</span>(<span class="ruby-identifier">benefit</span>.<span class="ruby-identifier">content</span>)
+                                                                 <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;The benefit type: #{@insurance_type.inspect}**************&quot;</span>
+                                                            <span class="ruby-keyword">end</span>
+                                                        <span class="ruby-keyword">end</span>
+
+                                                          <span class="ruby-identifier">benefits</span>.<span class="ruby-identifier">element_children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">benefit</span><span class="ruby-operator">|</span>
+                                                                 <span class="ruby-identifier">x</span> = <span class="ruby-identifier">benefit</span>.<span class="ruby-identifier">path</span>
+                                                                 <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Benefit path: #{x}&quot;</span>
+                                                                 <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Benefit value: #{benefit.content}&quot;</span>
+                                                                <span class="ruby-identifier">process</span>(<span class="ruby-identifier">benefit</span>, <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@xlate</span>, <span class="ruby-identifier">arr</span>, <span class="ruby-identifier">faa_id</span>, <span class="ruby-ivar">@person_id</span>, <span class="ruby-ivar">@insurance_id</span>, <span class="ruby-ivar">@insurance_type</span>, <span class="ruby-keyword">nil</span>)
+                                                        <span class="ruby-keyword">end</span>
+                                                  <span class="ruby-keyword">end</span>
+                                                <span class="ruby-keyword">end</span>
+                                                <span class="ruby-comment">#*********************************benefits end*************************</span>
+
+                                        <span class="ruby-keyword">end</span>                <span class="ruby-comment">#children do block of &quot;assistance_tax_household_member&quot;</span>
+
+                                <span class="ruby-keyword">end</span>         <span class="ruby-comment">#children do block of &quot;assistance_tax_household_members&quot;</span>
+
+                        <span class="ruby-keyword">end</span>   <span class="ruby-comment"># if block &quot;assistance_tax_household_members&quot;</span>
+
+                <span class="ruby-keyword">end</span>  <span class="ruby-comment"># children do block &quot;assistance_tax_household&quot;</span>
+
+        <span class="ruby-keyword">end</span>  <span class="ruby-comment"># children do block &quot;assistance_tax_households&quot;</span>
+
+<span class="ruby-keyword">end</span> <span class="ruby-comment"># if block &quot;assistance_tax_households&quot;</span>
+
+
+<span class="ruby-keyword">end</span> <span class="ruby-comment"># Do block //financial_assistance_application&quot;</span>
+
+
+
+<span class="ruby-identifier">filer_type</span> = <span class="ruby-identifier">arr</span>.<span class="ruby-identifier">select</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>[<span class="ruby-value">-2</span>] <span class="ruby-operator">==</span> <span class="ruby-string">&quot;filertype&quot;</span>}
+
+<span class="ruby-identifier">filer_type</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>[<span class="ruby-value">1</span>] = <span class="ruby-string">&quot;finapp_tax_in&quot;</span> }
+
+<span class="ruby-identifier">tax_in_reject</span> =[]
+
+<span class="ruby-identifier">arr</span>.<span class="ruby-identifier">delete_if</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">tax_in_reject</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">x</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">x</span>[<span class="ruby-value">1</span>] <span class="ruby-operator">==</span> <span class="ruby-string">&quot;finapp_tax_in&quot;</span> }
+<span class="ruby-identifier">filer_type</span>.<span class="ruby-identifier">delete_if</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>[<span class="ruby-value">3</span>]<span class="ruby-operator">==</span><span class="ruby-keyword">nil</span>}
+
+<span class="ruby-identifier">filer_type</span>.<span class="ruby-identifier">uniq</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">arr</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">x</span>}
+
+<span class="ruby-comment">#add rabbitmq headers to finapp in fields</span>
+<span class="ruby-identifier">arr</span>.<span class="ruby-identifier">concat</span>(<span class="ruby-identifier">add_headers_to_finapp_in</span>)
+
+<span class="ruby-identifier">$EA_LOG</span>.<span class="ruby-identifier">info</span>(<span class="ruby-node">&quot;***********************\n\nThe Holy moly Big Array:\n #{arr.inspect}\n**********************\n\n&quot;</span>)
+
+
+
+
+<span class="ruby-ivar">@tablename_array</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">tn</span><span class="ruby-operator">|</span>
+
+<span class="ruby-ivar">@table_arr</span> = <span class="ruby-identifier">arr</span>.<span class="ruby-identifier">select</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">value</span>[<span class="ruby-value">1</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">tn</span>
+<span class="ruby-keyword">end</span>
+
+
+<span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@table_arr</span>.<span class="ruby-identifier">empty?</span>
+<span class="ruby-identifier">str</span> = <span class="ruby-ivar">@table_arr</span>.<span class="ruby-identifier">map</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;|&quot;</span>)}.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;|]&quot;</span>) <span class="ruby-operator">+</span> <span class="ruby-string">&quot;|]&quot;</span>
+<span class="ruby-ivar">@payload_str</span> = <span class="ruby-ivar">@payload_str</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">str</span> 
+<span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-ivar">@post_payload</span> = <span class="ruby-ivar">@payload_str</span> <span class="ruby-operator">+</span> <span class="ruby-string">&quot;\n\n&quot;</span> 
+
+<span class="ruby-identifier">$EA_LOG</span>.<span class="ruby-identifier">info</span>(<span class="ruby-node">&quot;***********************\n\npayload:\n #{@post_payload}\n**********************\n\n&quot;</span>)
+
+<span class="ruby-identifier">translated_hash</span> = {}
+<span class="ruby-identifier">translated_hash</span>[<span class="ruby-value">:payload</span>] = <span class="ruby-ivar">@post_payload</span>
+<span class="ruby-identifier">translated_hash</span>[<span class="ruby-value">:faa_id</span>]  = <span class="ruby-ivar">@faa_id</span>
+<span class="ruby-identifier">translated_hash</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="http://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://rdoc.github.io/rdoc">RDoc</a> 5.1.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+
