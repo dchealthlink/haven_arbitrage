@@ -54,11 +54,9 @@ end
 	   	else
 	   		Slack_it.new.notify("Curam payload recieved with IC: #{@ic_hash[:ic]} and xml for this IC is valid")
 	    complete = store_to_haven_db(curam_response)
-	   #Temporarily commenting the Relationship check for projected eligibility
-	    #consistent = curam_inconsistent_app_check
-	    if ( complete )#&& consistent )
-	    	Slack_it.new.notify("\nIt is a complete application but Relationship check is Temporarily off for PE\n")
-	    		#and consistent application\n****************************\n")
+	    consistent = curam_inconsistent_app_check
+	    if ( complete && consistent )
+	    	Slack_it.new.notify("\nIt is a complete and consistent application\n****************************\n")
 	    	puts "***********************Hurray validations success******************************"
 	    EA_Response_builder.call_haven(curam_response)
 	    else
