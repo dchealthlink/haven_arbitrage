@@ -17,9 +17,9 @@ class Curam_Translator
 
 
 def create_channel(host, vhost, port, user, password)
-      conn = Bunny.new(:hostname => host, :vhost => vhost, :port => port, :user => user, :password => password)
-      conn.start
-      ch = conn.create_channel
+      @conn = Bunny.new(:hostname => host, :vhost => vhost, :port => port, :user => user, :password => password)
+      @conn.start
+      ch = @conn.create_channel
       #ch.prefetch(1)
       return ch
 end
@@ -39,7 +39,7 @@ end
 	  	    $CURAM_LOG.info("[x] Finshed with Curam XML translation")
 		   end
 		rescue Interrupt => _
-		  conn.close
+		  @conn.close
 		end	
 	end
 
@@ -54,9 +54,11 @@ end
 	   	else
 	   		Slack_it.new.notify("Curam payload recieved with IC: #{@ic_hash[:ic]} and xml for this IC is valid")
 	    complete = store_to_haven_db(curam_response)
-	    consistent = curam_inconsistent_app_check
-	    if ( complete && consistent )
-	    	Slack_it.new.notify("\nIt is a complete and consistent application\n****************************\n")
+	   #Temporarily commenting the Relationship check for projected eligibility
+	    #consistent = curam_inconsistent_app_check
+	    if ( complete )#&& consistent )
+	    	Slack_it.new.notify("\nIt is a complete application but Relationship check is Temporarily off for PE\n")
+	    		#and consistent application\n****************************\n")
 	    	puts "***********************Hurray validations success******************************"
 	    EA_Response_builder.call_haven(curam_response)
 	    else
