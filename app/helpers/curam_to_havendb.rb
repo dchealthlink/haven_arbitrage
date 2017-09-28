@@ -6,8 +6,8 @@ require 'logger'
 require './app/models/application_xlate.rb'
 require './app/helpers/publish.rb'
 require "./app/notifications/slack_notifier.rb"
+require "./app/helpers/ancillary_esb_calls.rb"
 $CURAM_LOG = Logger.new('./log/curam.log', 'monthly')
-
 
 
 
@@ -280,7 +280,14 @@ application_in_payload = {
 #****************************Person In payload****************************************#
 @curam_xml.xpath("//curam_applicant").each_with_index do |applicant, applicant_num|
 
-   @concern_role_id = applicant.search("concern_role_id").text.to_s 
+  @concern_role_id = applicant.search("concern_role_id").text.to_s 
+#Add five year bar to person level
+@ancillary_esb_calls = Ancillary_ESB_Calls.new
+@five_year_bar = @ancillary_esb_calls.five_year_bar(@concern_role_id)
+  applicant.add_child(@five_year_bar)
+  puts "applicant is : #{applicant}"
+
+   
 
 
 @curam_xml.search("pdc_applicant").each do |pdc_person|
@@ -350,7 +357,9 @@ end
 
 #***********************************Deductions****************************************
 # #Note: Income and deductions store in same table --> "application_person_income_in"
-applicant.search("deduction").each do |deduction|
+@deductions = @ancillary_esb_calls.deductions(@concern_role_id)
+#applicant.search("deduction").each do |deduction|
+@deductions.each do |deduction| 
 
 if deduction.search("*").text != ""  
 
