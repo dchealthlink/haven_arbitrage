@@ -1,7 +1,7 @@
 require 'savon'
 require 'nokogiri'
 require 'logger'
-$LOG = Logger.new('/Users/venumadhavdondapati/workspace/github_repos/haven_arbitrage/log/curam.log', 'monthly')
+$LOG = Logger.new('./log/curam.log', 'monthly')
 
 class Ancillary_ESB_Calls
 
