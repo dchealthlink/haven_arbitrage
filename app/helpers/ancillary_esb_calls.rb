@@ -5,7 +5,9 @@ $LOG = Logger.new('/Users/venumadhavdondapati/workspace/github_repos/haven_arbit
 
 class Ancillary_ESB_Calls
 
-def initialize
+def initialize(concern_role_id, *args)  
+ @concern_role_id = concern_role_id
+ @ic = args[0]
  savon_config = {
    :wsdl => "http://dhsdcasesbsoaappuat01.dhs.dc.gov:8011/HCLProxyService?wsdl",
    :ssl_verify_mode => :none,
@@ -17,80 +19,122 @@ def initialize
    :logger => $LOG
 }
 @client = Savon.client(savon_config)
-#[:curam_user_look_up, :five_year_bar, :income_pull, :deductions]
+#@client.operations => [:curam_user_look_up, :five_year_bar, :income_pull, :deductions, :tax_dependents, :filer_consent]
 end
 
 
 
-def income(concern_role_id)
+def incomes
 
 payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:inc="http://xmlns.oracle.com/pcbpel/adapter/db/sp/IncomeReqService">
    <soapenv:Header/>
    <soapenv:Body>
       <inc:IncomeInputParameters>
          <!--Optional:-->
-         <inc:I_CONCERNROLEID>#{concern_role_id}</inc:I_CONCERNROLEID>
+         <inc:I_CONCERNROLEID>#{@concern_role_id}</inc:I_CONCERNROLEID>
       </inc:IncomeInputParameters>
    </soapenv:Body>
 </soapenv:Envelope>}
 
 response = @client.call(:income_pull, xml: payload)
-response.xml
+income_block = Nokogiri::XML(response.xml).remove_namespaces!.search("income")
+$LOG.info(income_block.to_xml)
+income_block
 end
 
 
-def five_year_bar(concern_role_id)
+def five_year_bar
 #1176119585045217280
 payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:fiv="http://xmlns.oracle.com/pcbpel/adapter/db/sp/FiveYearBarService">
    <soapenv:Header/>
    <soapenv:Body>
       <fiv:InputParameters>
          <!--Optional:-->
-         <fiv:I_CONCERNROLEID>#{concern_role_id}</fiv:I_CONCERNROLEID>
+         <fiv:I_CONCERNROLEID>#{@concern_role_id}</fiv:I_CONCERNROLEID>
       </fiv:InputParameters>
    </soapenv:Body>
 </soapenv:Envelope>}
 
 response = @client.call(:five_year_bar, xml: payload)
-Nokogiri::XML(response.xml).remove_namespaces!.xpath("//five_year_bar").children.to_s
+fyb_block = Nokogiri::XML(response.xml).remove_namespaces!
+$LOG.info(fyb_block.to_xml)
+fyb_block.xpath("//five_year_bar").children.to_s
 end
 
 
-def deductions(concern_role_id)
+def deductions
    #-4291220057293324288
    payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ded="http://xmlns.oracle.com/pcbpel/adapter/db/sp/DeductionsService">
    <soapenv:Header/>
    <soapenv:Body>
       <ded:DeductionsInput>
          <!--Optional:-->
-         <ded:I_CONCERNROLEID>#{concern_role_id}</ded:I_CONCERNROLEID>
+         <ded:I_CONCERNROLEID>#{@concern_role_id}</ded:I_CONCERNROLEID>
       </ded:DeductionsInput>
    </soapenv:Body>
 </soapenv:Envelope>}
 
 response = @client.call(:deductions, xml: payload)
-Nokogiri::XML(response.xml).remove_namespaces!.search("deduction")
+deduction_block = Nokogiri::XML(response.xml).remove_namespaces!.search("deduction")
+$LOG.info(deduction_block.to_xml)
+deduction_block
 end
 
+def tax_dependents
+   #6194000082497437696 Venu testcase filer 2 dependents
+   payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tax="http://xmlns.haven.dc.govcom/haven/taxdepdetailsin">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tax:TaxDep_InputParameters>
+         <!--Optional:-->
+         <tax:I_CONCERNROLEID>#{@concern_role_id}</tax:I_CONCERNROLEID>
+      </tax:TaxDep_InputParameters>
+   </soapenv:Body>
+</soapenv:Envelope>}
+
+response = @client.call(:tax_dependents, xml: payload)
+tax_dependent_block = Nokogiri::XML(response.xml).remove_namespaces!.search("tax_dependents")
+$LOG.info(tax_dependent_block.to_xml)
+tax_dependent_block
 end
-# #for Tom
-# def test
-# arr = [1035269362388303872, 7808683201953529856, -583477698072936448, -7629987411111444480, 91497526552690688, -8333695211033067520,
-# -2879832179636961280, -7484332760727814144, -7885153127563788288, -7977554435494641664, 5762160568496553984, 3494811461371297792,
-#  2253966409937715200, 3955722724235542528, -7109430880845692928, 5518822152595308544, 3863454165153873920, -8167321217506738176,
-#  4262406393014779904, -1002094210360279040]
-# arr.each do |cid|
 
-# @doc = Nokogiri::XML(Ancillary_ESB_Calls.new.five_year_bar(cid))
-# File.open('five_year_bar.text', 'a') { |f|
-#   f.write "concern_role_id: #{cid}\n\n#{@doc.to_xml}\n\n\n"
-# }
-# #puts @doc.to_xml
+
+def filer_consent
+   #ic : 4150378
+   puts "IC: #{@ic}"
+   payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:fil="http://xmlns.haven.dc.govcom/haven/FilerConsentIn">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <fil:TaxDep_InputParameters>
+         <fil:IC_Input_List>#{@ic}</fil:IC_Input_List>
+      </fil:TaxDep_InputParameters>
+   </soapenv:Body>
+</soapenv:Envelope>}
+
+response = @client.call(:filer_consent, xml: payload)
+filer_consent_block = Nokogiri::XML(response.xml).remove_namespaces!
+$LOG.info(filer_consent_block.to_xml)
+filer_consent_block.xpath("//filer_consent").children.to_s
+end   
+
+end #class end
+
+
+#puts "value:#{Ancillary_ESB_Calls.new.five_year_bar(1176119585045217280)}"
+#puts "Value: #{Ancillary_ESB_Calls.new(1, 4150378).filer_consent}"
+
+# @ancillary_esb_calls = Ancillary_ESB_Calls.new(3741790085394202624)
+# @tax_dependents = @ancillary_esb_calls.tax_dependents
+# puts "Value : #{@tax_dependents}"
+# @tax_dependents.each do |tax_dependents|
+# if tax_dependents.search("*").text != ""
+#   tax_dependents.search("tax_dependent").each do |dependent|
+#    puts "dependent inspect: #{dependent}"
 # end
 # end
+# end
+  
 
-# test
 
-puts "value:#{Ancillary_ESB_Calls.new.deductions(-2223093480639430656)}"
 
 
