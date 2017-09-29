@@ -425,7 +425,7 @@ case applicant.search("tax_filing_status").text
 #Filer's dependents post
 
 #applicant.search("tax_dependents").each do |tax_dependents|
-if @tax_no == 1
+
 @tax_dependents = @ancillary_esb_calls.tax_dependents
 
 @tax_dependents.each do |tax_dependents|
@@ -441,7 +441,6 @@ if tax_dependents.search("*").text != ""
   @application_tax_in = payload_post(application_tax_in_payload)
 end #do
 end #do
-end #if
 end #if
 
   when "Non Filer"
