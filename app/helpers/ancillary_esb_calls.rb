@@ -5,9 +5,7 @@ $LOG = Logger.new('./log/curam.log', 'monthly')
 
 class Ancillary_ESB_Calls
 
-def initialize(concern_role_id, *args)  
- @concern_role_id = concern_role_id
- @ic = args[0]
+def initialize  
  savon_config = {
    :wsdl => "http://dhsdcasesbsoaappuat01.dhs.dc.gov:8011/HCLProxyService?wsdl",
    :ssl_verify_mode => :none,
@@ -24,14 +22,14 @@ end
 
 
 
-def incomes
+def incomes(concern_role_id)
 
 payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:inc="http://xmlns.oracle.com/pcbpel/adapter/db/sp/IncomeReqService">
    <soapenv:Header/>
    <soapenv:Body>
       <inc:IncomeInputParameters>
          <!--Optional:-->
-         <inc:I_CONCERNROLEID>#{@concern_role_id}</inc:I_CONCERNROLEID>
+         <inc:I_CONCERNROLEID>#{concern_role_id}</inc:I_CONCERNROLEID>
       </inc:IncomeInputParameters>
    </soapenv:Body>
 </soapenv:Envelope>}
@@ -43,14 +41,14 @@ income_block
 end
 
 
-def five_year_bar
+def five_year_bar(concern_role_id)
 #1176119585045217280
 payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:fiv="http://xmlns.oracle.com/pcbpel/adapter/db/sp/FiveYearBarService">
    <soapenv:Header/>
    <soapenv:Body>
       <fiv:InputParameters>
          <!--Optional:-->
-         <fiv:I_CONCERNROLEID>#{@concern_role_id}</fiv:I_CONCERNROLEID>
+         <fiv:I_CONCERNROLEID>#{concern_role_id}</fiv:I_CONCERNROLEID>
       </fiv:InputParameters>
    </soapenv:Body>
 </soapenv:Envelope>}
@@ -62,14 +60,14 @@ fyb_block.xpath("//five_year_bar").children.to_s
 end
 
 
-def deductions
+def deductions(concern_role_id)
    #-4291220057293324288
    payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ded="http://xmlns.oracle.com/pcbpel/adapter/db/sp/DeductionsService">
    <soapenv:Header/>
    <soapenv:Body>
       <ded:DeductionsInput>
          <!--Optional:-->
-         <ded:I_CONCERNROLEID>#{@concern_role_id}</ded:I_CONCERNROLEID>
+         <ded:I_CONCERNROLEID>#{concern_role_id}</ded:I_CONCERNROLEID>
       </ded:DeductionsInput>
    </soapenv:Body>
 </soapenv:Envelope>}
@@ -80,14 +78,14 @@ $LOG.info(deduction_block.to_xml)
 deduction_block
 end
 
-def tax_dependents
+def tax_dependents(concern_role_id)
    #6194000082497437696 Venu testcase filer 2 dependents
    payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tax="http://xmlns.haven.dc.govcom/haven/taxdepdetailsin">
    <soapenv:Header/>
    <soapenv:Body>
       <tax:TaxDep_InputParameters>
          <!--Optional:-->
-         <tax:I_CONCERNROLEID>#{@concern_role_id}</tax:I_CONCERNROLEID>
+         <tax:I_CONCERNROLEID>#{concern_role_id}</tax:I_CONCERNROLEID>
       </tax:TaxDep_InputParameters>
    </soapenv:Body>
 </soapenv:Envelope>}
@@ -99,14 +97,14 @@ tax_dependent_block
 end
 
 
-def filer_consent
+def filer_consent(ic)
    #ic : 4150378
    puts "IC: #{@ic}"
    payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:fil="http://xmlns.haven.dc.govcom/haven/FilerConsentIn">
    <soapenv:Header/>
    <soapenv:Body>
       <fil:TaxDep_InputParameters>
-         <fil:IC_Input_List>#{@ic}</fil:IC_Input_List>
+         <fil:IC_Input_List>#{ic}</fil:IC_Input_List>
       </fil:TaxDep_InputParameters>
    </soapenv:Body>
 </soapenv:Envelope>}
