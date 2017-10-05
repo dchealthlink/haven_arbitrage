@@ -282,9 +282,9 @@ application_in_payload = {
 
   @concern_role_id = applicant.search("concern_role_id").text.to_s 
 #Add five year bar to person level
-@ancillary_esb_calls = Ancillary_ESB_Calls.new(@concern_role_id, @integrated_case_reference)
-@five_year_bar = @ancillary_esb_calls.five_year_bar
-@filer_consent = @ancillary_esb_calls.filer_consent
+@ancillary_esb_calls = Ancillary_ESB_Calls.new
+@five_year_bar = @ancillary_esb_calls.five_year_bar(@concern_role_id)
+@filer_consent = @ancillary_esb_calls.filer_consent(@integrated_case_reference)
   
 applicant.add_child(@five_year_bar)
 applicant.add_child(@filer_consent)
@@ -339,7 +339,7 @@ end
 
 #**********************************Income*********************************************#
 @incomeid = 1
-@incomes = @ancillary_esb_calls.incomes
+@incomes = @ancillary_esb_calls.incomes(@concern_role_id)
 
 #applicant.search("income").each do |income|
 
@@ -363,7 +363,7 @@ end
 
 #***********************************Deductions****************************************
 # #Note: Income and deductions store in same table --> "application_person_income_in"
-@deductions = @ancillary_esb_calls.deductions
+@deductions = @ancillary_esb_calls.deductions(@concern_role_id)
 #applicant.search("deduction").each do |deduction|
 @deductions.each do |deduction| 
 
@@ -426,7 +426,7 @@ case applicant.search("tax_filing_status").text
 
 #applicant.search("tax_dependents").each do |tax_dependents|
 
-@tax_dependents = @ancillary_esb_calls.tax_dependents
+@tax_dependents = @ancillary_esb_calls.tax_dependents(@concern_role_id)
 
 @tax_dependents.each do |tax_dependents|
 if tax_dependents.search("*").text != ""
