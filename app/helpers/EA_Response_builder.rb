@@ -19,6 +19,7 @@ extend Publish
         #{"applId":"xxxxxxx"}
         acrn_payload = {"appRefNum" => curam_res.xpath("//AppCaseRef").text}.to_s.gsub("=>", ":")
         ic_payload =   {"icNumber" => curam_res.xpath("//integrated_case_reference").text}.to_s.gsub("=>", ":")
+ #uncomment below 4 lines after finishing ancillary calls
           puts "calling :  ic_system_wrapper_q3j"
           hdi_call = RestClient.post('newsafehaven.dcmic.org/ic_system_wrapper_q3j.php', ic_payload, {content_type: :"application/json", accept: :"application/json"})
           $CURAM_LOG.info("Arbitrage triggered ic_system_wrapper_q3j.php webservice. Response: #{hdi_call.body}")
