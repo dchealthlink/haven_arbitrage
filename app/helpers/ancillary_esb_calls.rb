@@ -1,13 +1,14 @@
 require 'savon'
 require 'nokogiri'
 require 'logger'
+require './config/secret.rb'
 $LOG = Logger.new('./log/curam.log', 'monthly')
 
 class Ancillary_ESB_Calls
 
 def initialize  
  savon_config = {
-   :wsdl => "http://dhsdcasesbsoaappuat01.dhs.dc.gov:8011/HCLProxyService?wsdl",
+   :wsdl => CURAM_ESB_SOAP[:wsdl_ancillary_pull],
    :ssl_verify_mode => :none,
    :ssl_version => :TLSv1,
    :open_timeout => 100,
