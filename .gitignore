@@ -17,4 +17,5 @@
 /tmp
 config/secret.rb
 config/database.yml
+config/*
 
