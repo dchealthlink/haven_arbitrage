@@ -361,6 +361,28 @@ end
 end
 #**************************************************************************************#
 
+#***********************************Benefits******************************************
+applicant.search("benefit").each do |benefit|
+
+if benefit.search("*").text != ""  
+  application_person_benefit_in_payload = {
+
+ "Action" => "INSERT",
+ "Location" => "application_person_benefit_in",
+ "xaid" => "#{SecureRandom.uuid}",
+ "Data" => [data_block("benefit", "application_person_benefit_in", benefit).merge!("personid" => @concern_role_id.to_s, "icid" => $icid)]
+  
+  }
+
+@application_person_benefit_in = payload_post(application_person_benefit_in_payload)
+end
+end
+
+
+#*************************************************************************************
+
+
+
 #***********************************Deductions****************************************
 # #Note: Income and deductions store in same table --> "application_person_income_in"
 @deductions = @ancillary_esb_calls.deductions(@concern_role_id)
