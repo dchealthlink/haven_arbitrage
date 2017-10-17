@@ -282,7 +282,7 @@ application_in_payload = {
 
   @concern_role_id = applicant.search("concern_role_id").text.to_s 
 #Add five year bar to person level
-@ancillary_esb_calls = Ancillary_ESB_Calls.new
+@ancillary_esb_calls = Ancillary_ESB_Calls.new(@integrated_case_reference)
 @five_year_bar = @ancillary_esb_calls.five_year_bar(@concern_role_id)
 @filer_consent = @ancillary_esb_calls.filer_consent(@integrated_case_reference)
   
