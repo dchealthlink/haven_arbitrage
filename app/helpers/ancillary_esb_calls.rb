@@ -7,7 +7,7 @@ $LOG = Logger.new('./log/curam.log', 'monthly')
 
 class Ancillary_ESB_Calls
 
-def initialize  
+def initialize(*arg)  
  savon_config = {
    :wsdl => CURAM_ESB_SOAP[:wsdl_ancillary_pull],
    :ssl_verify_mode => :none,
@@ -19,6 +19,7 @@ def initialize
    :logger => $LOG
 }
 @client = Savon.client(savon_config)
+@ic = arg[0]
 #@client.operations => [:curam_user_look_up, :five_year_bar, :income_pull, :deductions, :tax_dependents, :filer_consent]
 end
 
@@ -132,6 +133,7 @@ payload = {
 "keyindex" => "#{keyindex}", #integrated_case_reference or concern_role_id
 "keyvalue" => "#{keyvalue}", #actual value of integrated_case_reference or concern_role_id
 "keytype" => "#{keytype}",
+"altid" => "#{@ic}",
 "keyresultid" => "",#$icid != nil ? $icid : "",
 "status" => "Success",
 "keytimestamp" => Time.now.to_s,
