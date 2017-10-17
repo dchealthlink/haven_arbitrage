@@ -38,7 +38,7 @@ payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/en
 
 response = @client.call(:income_pull, xml: payload)
 income_block = Nokogiri::XML(response.xml).remove_namespaces!.search("income")
-haven_ext_log("concern_role_id", concern_role_id, response)
+haven_ext_log("concern_role_id", concern_role_id, "Income", response)
 $LOG.info(income_block.to_xml)
 income_block
 end
@@ -58,7 +58,7 @@ payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/en
 
 response = @client.call(:five_year_bar, xml: payload)
 fyb_block = Nokogiri::XML(response.xml).remove_namespaces!
-haven_ext_log("concern_role_id", concern_role_id, response)
+haven_ext_log("concern_role_id", concern_role_id, "Five Year Bar", response)
 $LOG.info(fyb_block.to_xml)
 fyb_block.xpath("//five_year_bar").children.to_s
 end
@@ -78,7 +78,7 @@ def deductions(concern_role_id)
 
 response = @client.call(:deductions, xml: payload)
 deduction_block = Nokogiri::XML(response.xml).remove_namespaces!.search("deduction")
-haven_ext_log("concern_role_id", concern_role_id, response)
+haven_ext_log("concern_role_id", concern_role_id, "Deduction", response)
 $LOG.info(deduction_block.to_xml)
 deduction_block
 end
@@ -97,7 +97,7 @@ def tax_dependents(concern_role_id)
 
 response = @client.call(:tax_dependents, xml: payload)
 tax_dependent_block = Nokogiri::XML(response.xml).remove_namespaces!.search("tax_dependents")
-haven_ext_log("concern_role_id", concern_role_id, response)
+haven_ext_log("concern_role_id", concern_role_id, "Tax Dependent", response)
 $LOG.info(tax_dependent_block.to_xml)
 tax_dependent_block
 end
@@ -117,13 +117,13 @@ def filer_consent(ic)
 
 response = @client.call(:filer_consent, xml: payload)
 filer_consent_block = Nokogiri::XML(response.xml).remove_namespaces!
-haven_ext_log("integrated_case_reference", ic, response)
+haven_ext_log("integrated_case_reference", ic, "Filer Consent", response)
 $LOG.info(filer_consent_block.to_xml)
 filer_consent_block.xpath("//filer_consent").children.to_s
 end   
 
 
-def haven_ext_log(keyindex, keyvalue, payload)
+def haven_ext_log(keyindex, keyvalue, keytype, payload)
 payload = {
 
 "action" => "INSERT", 
@@ -131,20 +131,20 @@ payload = {
 "xaid" => "value", 
 "keyindex" => "#{keyindex}", #integrated_case_reference or concern_role_id
 "keyvalue" => "#{keyvalue}", #actual value of integrated_case_reference or concern_role_id
-"keytype" => "Curam Ancillary Pull",
+"keytype" => "#{keytype}",
 "keyresultid" => "",#$icid != nil ? $icid : "",
 "status" => "Success",
 "keytimestamp" => Time.now.to_s,
-"queuename" => "Haven_ICID_RMQ",
-"apprefnum" => "",#@curam_xml.xpath("//AppCaseRef").text.to_s,
+"queuename" => "Ancillary Pull",
+"apprefnum" => "",
 "requesttype" => "Sent",
 "xmlpayload" => "#{payload}"
 
 }
 
-puts "Log Curam Ancillary Intake: #{payload.to_s.gsub("=>", ":")}\n\n"
+$LOG.info("Log Curam Ancillary Intake: #{payload.to_s.gsub("=>", ":")}\n\n")
 application_in_res = RestClient.post('newsafehaven.dcmic.org/external_log_test.php', payload.to_s.gsub("=>", ":"), {content_type: :"application/json", accept: :"application/json"})
-puts "Log curam Ancillary response body: #{application_in_res.body}"
+$LOG.info("Log curam Ancillary response body: #{application_in_res.body}")
 application_in_res.body
 end
 
@@ -153,7 +153,8 @@ end #class end
 
 
 #puts "value:#{Ancillary_ESB_Calls.new.five_year_bar(1176119585045217280)}"
-#puts "Value: #{Ancillary_ESB_Calls.new(1, 4150378).filer_consent}"
+#puts "value:#{Ancillary_ESB_Calls.new.filer_consent(2099584)}"
+#puts "value:#{Ancillary_ESB_Calls.new.incomes(6507753396294909952)}"
 
 # @ancillary_esb_calls = Ancillary_ESB_Calls.new(3741790085394202624)
 # @tax_dependents = @ancillary_esb_calls.tax_dependents
