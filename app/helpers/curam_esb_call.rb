@@ -34,7 +34,7 @@ message = { "WL5G3N3:ICIDParameters" => { "WL5G3N3:IntegratedCasereference_ID" =
 begin 
 	response = client.call(:process, message: message)
 rescue 
-	Slack_it.new.notify("IC:#{ic}  No data from curam (500/Timeout/No data). @mamatha.burujukati @rahulch :trumpet:")
+	Slack_it.new.notify("IC:#{ic}  No data from curam (500/Timeout/No data). <@mamatha.burujukati>, <@rahulch>, <@venumadhav> :trumpet:")
 else
 	$CURAM_LOG.info("XML recieved from curam for IC:#{ic}\n#{Nokogiri::XML(response.xml.to_s).to_xml}")
 	response.xml

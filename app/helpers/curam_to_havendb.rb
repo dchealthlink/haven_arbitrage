@@ -48,7 +48,7 @@ end
 def curam_incomplete_app_check
 
 if !@notice.empty? && (@payload["Location"] == "application_pdc_person_in")
- message = "IC: #{@integrated_case_reference}\n\nInfo: \n#{@notice.join(" \n")} \n\n\n Thanks,\n -Arbitrage"
+ message = "IC: #{@integrated_case_reference}\n\nInfo: \n#{@notice.join(" \n")} \n"
  email_notice(message)
  Slack_it.new.notify(message)  #slack notification
  application_in_status("incomplete")
@@ -80,7 +80,7 @@ mandatory_fields.uniq { |value| value.targetfield }.each do |value|
 end
   unless @missing_fields.empty?
     message = "IC: #{@payload["Data"].first["icnumber"]}\n\nError: <#{@missing_fields.join(", ")}> value missing in curam data
-                \n\n\n Thanks,\n -Arbitrage"
+                \n"
     email_notice(message)
     Slack_it.new.notify(message)
   end
@@ -94,7 +94,7 @@ def curam_inconsistent_app_check
  
   if @curam_xml.xpath("//curam_applicant").count >= 2 && @curam_xml.xpath("//relationship").text.strip.empty?
     message = "Hello\n\n IC: #{@integrated_case_reference}\n\nError: No relationship data found in curam xml
-                \n\n\n\n\n Thanks,\n -Arbitrage"
+                \n"
     email_notice(message)
     Slack_it.new.notify(message)
     application_in_status("inconsistent")
