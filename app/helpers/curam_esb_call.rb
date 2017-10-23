@@ -18,8 +18,8 @@ savon_config = {
   :ssl_version => :TLSv1,
   :namespaces => ESB_SERVICE_NAMESPACE,
   :log => true,
-  :open_timeout => 300,
-  :read_timeout => 300,
+  :open_timeout => 100,
+  :read_timeout => 100,
   :logger => $CURAM_LOG,
   :wsse_auth => CURAM_ESB_SOAP[:usercredentials]
 #   ssl_cert_file: "/home/arbitrage/esb_certs/esb_root.pem",
