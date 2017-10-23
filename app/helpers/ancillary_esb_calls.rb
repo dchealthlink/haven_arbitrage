@@ -16,7 +16,8 @@ def initialize(*arg)
    :read_timeout => 100,
    :log => true,
   #:log_level => :debug,
-   :logger => $LOG
+   :logger => $LOG,
+   :wsse_auth => CURAM_ESB_SOAP[:usercredentials]
 }
 @client = Savon.client(savon_config)
 @ic = arg[0]
@@ -154,7 +155,7 @@ end
 end #class end
 
 
-#puts "value:#{Ancillary_ESB_Calls.new.five_year_bar(1176119585045217280)}"
+#puts "value:#{Ancillary_ESB_Calls.new.five_year_bar(683331366967836672)}"
 #puts "value:#{Ancillary_ESB_Calls.new.filer_consent(2099584)}"
 #puts "value:#{Ancillary_ESB_Calls.new.incomes(6507753396294909952)}"
 
