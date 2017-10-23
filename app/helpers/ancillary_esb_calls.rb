@@ -146,7 +146,7 @@ payload = {
 }
 
 $LOG.info("Log Curam Ancillary Intake: #{payload.to_s.gsub("=>", ":")}\n\n")
-application_in_res = RestClient.post('newsafehaven.dcmic.org/external_log_test.php', payload.to_s.gsub("=>", ":"), {content_type: :"application/json", accept: :"application/json"})
+application_in_res = RestClient.post('prod-safe-haven/external_log_test.php', payload.to_s.gsub("=>", ":"), {content_type: :"application/json", accept: :"application/json"})
 $LOG.info("Log curam Ancillary response body: #{application_in_res.body}")
 application_in_res.body
 end
@@ -155,7 +155,8 @@ end
 end #class end
 
 
-#puts "value:#{Ancillary_ESB_Calls.new.five_year_bar(683331366967836672)}"
+#
+puts "value:#{Ancillary_ESB_Calls.new.five_year_bar(683331366967836672)}"
 #puts "value:#{Ancillary_ESB_Calls.new.filer_consent(2099584)}"
 #puts "value:#{Ancillary_ESB_Calls.new.incomes(6507753396294909952)}"
 
