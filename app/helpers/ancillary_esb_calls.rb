@@ -28,8 +28,17 @@ end
 
 def incomes(concern_role_id)
 
-payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:inc="http://xmlns.oracle.com/pcbpel/adapter/db/sp/IncomeReqService">
-   <soapenv:Header/>
+payload = %Q{<soapenv:Envelope xmlns:inc="http://xmlns.oracle.com/pcbpel/adapter/db/sp/IncomeReqService" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Header>
+      <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken wsu:Id="UsernameToken-76F32F0B87A34CBF9815087722128176">
+            <wsse:Username>#{CURAM_ESB_SOAP[:usercredentials][0]}</wsse:Username>
+            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">#{CURAM_ESB_SOAP[:usercredentials][1]}</wsse:Password>
+            <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">UNtvowDnf4xigyHQkH6idg==</wsse:Nonce>
+            <wsu:Created>2017-10-23T15:23:32.817Z</wsu:Created>
+         </wsse:UsernameToken>
+      </wsse:Security>
+   </soapenv:Header>
    <soapenv:Body>
       <inc:IncomeInputParameters>
          <!--Optional:-->
@@ -48,15 +57,26 @@ end
 
 def five_year_bar(concern_role_id)
 #1176119585045217280
-payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:fiv="http://xmlns.oracle.com/pcbpel/adapter/db/sp/FiveYearBarService">
-   <soapenv:Header/>
+
+payload = %Q{<soapenv:Envelope xmlns:fiv="http://xmlns.oracle.com/pcbpel/adapter/db/sp/FiveYearBarService" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Header>
+      <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken wsu:Id="UsernameToken-76F32F0B87A34CBF9815087690338153">
+            <wsse:Username>#{CURAM_ESB_SOAP[:usercredentials][0]}</wsse:Username>
+            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">#{CURAM_ESB_SOAP[:usercredentials][1]}</wsse:Password>
+            <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">pFNcrmXkurqbKlYotFUV2w==</wsse:Nonce>
+            <wsu:Created>2017-10-23T14:30:33.814Z</wsu:Created>
+         </wsse:UsernameToken>
+      </wsse:Security>
+   </soapenv:Header>
    <soapenv:Body>
       <fiv:InputParameters>
          <!--Optional:-->
          <fiv:I_CONCERNROLEID>#{concern_role_id}</fiv:I_CONCERNROLEID>
       </fiv:InputParameters>
    </soapenv:Body>
-</soapenv:Envelope>}
+</soapenv:Envelope>
+ }
 
 response = @client.call(:five_year_bar, xml: payload)
 fyb_block = Nokogiri::XML(response.xml).remove_namespaces!
@@ -68,8 +88,17 @@ end
 
 def deductions(concern_role_id)
    #-4291220057293324288
-   payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ded="http://xmlns.oracle.com/pcbpel/adapter/db/sp/DeductionsService">
-   <soapenv:Header/>
+   payload = %Q{<soapenv:Envelope xmlns:ded="http://xmlns.oracle.com/pcbpel/adapter/db/sp/DeductionsService" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Header>
+      <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken wsu:Id="UsernameToken-76F32F0B87A34CBF9815087722428937">
+            <wsse:Username>#{CURAM_ESB_SOAP[:usercredentials][0]}</wsse:Username>
+            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">#{CURAM_ESB_SOAP[:usercredentials][1]}</wsse:Password>
+            <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">90RcfDFbESh3p9qPoSJIvw==</wsse:Nonce>
+            <wsu:Created>2017-10-23T15:24:02.893Z</wsu:Created>
+         </wsse:UsernameToken>
+      </wsse:Security>
+   </soapenv:Header>
    <soapenv:Body>
       <ded:DeductionsInput>
          <!--Optional:-->
@@ -88,7 +117,16 @@ end
 def tax_dependents(concern_role_id)
    #6194000082497437696 Venu testcase filer 2 dependents
    payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tax="http://xmlns.haven.dc.govcom/haven/taxdepdetailsin">
-   <soapenv:Header/>
+   <soapenv:Header>
+      <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken wsu:Id="UsernameToken-76F32F0B87A34CBF9815087718487684">
+            <wsse:Username>#{CURAM_ESB_SOAP[:usercredentials][0]}</wsse:Username>
+            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">#{CURAM_ESB_SOAP[:usercredentials][1]}</wsse:Password>
+            <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">CdFpRHgcY/RdRl1GdFtIVA==</wsse:Nonce>
+            <wsu:Created>2017-10-23T15:17:28.768Z</wsu:Created>
+         </wsse:UsernameToken>
+      </wsse:Security>
+   </soapenv:Header>
    <soapenv:Body>
       <tax:TaxDep_InputParameters>
          <!--Optional:-->
@@ -108,14 +146,24 @@ end
 def filer_consent(ic)
    #ic : 4150378
    puts "IC: #{@ic}"
-   payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:fil="http://xmlns.haven.dc.govcom/haven/FilerConsentIn">
-   <soapenv:Header/>
+   payload = %Q{<soapenv:Envelope xmlns:fil="http://xmlns.haven.dc.govcom/haven/FilerConsentIn" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Header>
+      <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken wsu:Id="UsernameToken-76F32F0B87A34CBF9815087721841475">
+            <wsse:Username>#{CURAM_ESB_SOAP[:usercredentials][0]}</wsse:Username>
+            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">#{CURAM_ESB_SOAP[:usercredentials][1]}</wsse:Password>
+            <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">z2wMNAsg9xfrwv4+gKKBqQ==</wsse:Nonce>
+            <wsu:Created>2017-10-23T15:23:04.147Z</wsu:Created>
+         </wsse:UsernameToken>
+      </wsse:Security>
+   </soapenv:Header>
    <soapenv:Body>
       <fil:TaxDep_InputParameters>
          <fil:IC_Input_List>#{ic}</fil:IC_Input_List>
       </fil:TaxDep_InputParameters>
    </soapenv:Body>
-</soapenv:Envelope>}
+</soapenv:Envelope>
+ }
 
 response = @client.call(:filer_consent, xml: payload)
 filer_consent_block = Nokogiri::XML(response.xml).remove_namespaces!
@@ -155,9 +203,9 @@ end
 end #class end
 
 
-#
-#puts "value:#{Ancillary_ESB_Calls.new.five_year_bar(683331366967836672)}"
-#puts "value:#{Ancillary_ESB_Calls.new.filer_consent(2099584)}"
+
+#puts "value:#{Ancillary_ESB_Calls.new.incomes(6507753396294909952)}"
+#puts "value:#{Ancillary_ESB_Calls.new.filer_consent(4164922)}"
 #puts "value:#{Ancillary_ESB_Calls.new.incomes(6507753396294909952)}"
 
 # @ancillary_esb_calls = Ancillary_ESB_Calls.new(3741790085394202624)
