@@ -24,7 +24,7 @@ def payload_post(payload)
   @payload = payload
    post_payload = @payload.to_s.gsub("=>", ":")
    $CURAM_LOG.info("#{"*"*100}\n#{@payload}\n\n")
-   application_in_res = RestClient.post('newsafehaven.dcmic.org/arb_input_wrapper.php', post_payload, {content_type: :"application/xml", accept: :"application/json"})
+   application_in_res = RestClient.post('prod-safe-haven/arb_input_wrapper.php', post_payload, {content_type: :"application/xml", accept: :"application/json"})
     
    if @payload["Location"] == "application_in" 
       #fix this
@@ -40,7 +40,7 @@ end
 def application_in_status(statustype)
  notice_payload = {"Action"=>"INSERT", "Location"=>"application_in_status", "xaid"=>"#{SecureRandom.uuid}", "Data"=>[{"keyfld"=>"#{@integrated_case_reference}", "keyid"=>"#{$icid}", "icnumber"=>"#{@integrated_case_reference}", "icid"=>"#{$icid}",
                    "statustype"=>"#{statustype}", "statustimestamp"=>"#{Time.now}", "applicationsource"=>"curam"}]}
- application_in_status = RestClient.post('newsafehaven.dcmic.org/arb_input_wrapper.php', notice_payload.to_s.gsub("=>", ":"), {content_type: :"application/xml", accept: :"application/json"})
+ application_in_status = RestClient.post('prod-safe-haven/arb_input_wrapper.php', notice_payload.to_s.gsub("=>", ":"), {content_type: :"application/xml", accept: :"application/json"})
  puts "Notice Payload: #{notice_payload}\n\n Application in status: #{application_in_status}"
 end  
 
@@ -132,7 +132,7 @@ payload = {
 }
 
 puts "Log Curam Intake: #{payload.to_s.gsub("=>", ":")}\n\n"
-application_in_res = RestClient.post('newsafehaven.dcmic.org/external_log_test.php', payload.to_s.gsub("=>", ":"), {content_type: :"application/json", accept: :"application/json"})
+application_in_res = RestClient.post('prod-safe-haven/external_log_test.php', payload.to_s.gsub("=>", ":"), {content_type: :"application/json", accept: :"application/json"})
 puts "Log curam response body: #{application_in_res.body}"
 application_in_res.body
 end
