@@ -35,7 +35,7 @@ payload = %Q{<soapenv:Envelope xmlns:inc="http://xmlns.oracle.com/pcbpel/adapter
             <wsse:Username>#{CURAM_ESB_SOAP[:usercredentials][0]}</wsse:Username>
             <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">#{CURAM_ESB_SOAP[:usercredentials][1]}</wsse:Password>
             <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">UNtvowDnf4xigyHQkH6idg==</wsse:Nonce>
-            <wsu:Created>2017-10-23T15:23:32.817Z</wsu:Created>
+            <wsu:Created>#{Time.now}</wsu:Created>
          </wsse:UsernameToken>
       </wsse:Security>
    </soapenv:Header>
@@ -65,7 +65,7 @@ payload = %Q{<soapenv:Envelope xmlns:fiv="http://xmlns.oracle.com/pcbpel/adapter
             <wsse:Username>#{CURAM_ESB_SOAP[:usercredentials][0]}</wsse:Username>
             <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">#{CURAM_ESB_SOAP[:usercredentials][1]}</wsse:Password>
             <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">pFNcrmXkurqbKlYotFUV2w==</wsse:Nonce>
-            <wsu:Created>2017-10-23T14:30:33.814Z</wsu:Created>
+            <wsu:Created>#{Time.now}</wsu:Created>
          </wsse:UsernameToken>
       </wsse:Security>
    </soapenv:Header>
@@ -95,7 +95,7 @@ def deductions(concern_role_id)
             <wsse:Username>#{CURAM_ESB_SOAP[:usercredentials][0]}</wsse:Username>
             <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">#{CURAM_ESB_SOAP[:usercredentials][1]}</wsse:Password>
             <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">90RcfDFbESh3p9qPoSJIvw==</wsse:Nonce>
-            <wsu:Created>2017-10-23T15:24:02.893Z</wsu:Created>
+            <wsu:Created>#{Time.now}</wsu:Created>
          </wsse:UsernameToken>
       </wsse:Security>
    </soapenv:Header>
@@ -123,7 +123,7 @@ def tax_dependents(concern_role_id)
             <wsse:Username>#{CURAM_ESB_SOAP[:usercredentials][0]}</wsse:Username>
             <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">#{CURAM_ESB_SOAP[:usercredentials][1]}</wsse:Password>
             <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">CdFpRHgcY/RdRl1GdFtIVA==</wsse:Nonce>
-            <wsu:Created>2017-10-23T15:17:28.768Z</wsu:Created>
+            <wsu:Created>#{Time.now}</wsu:Created>
          </wsse:UsernameToken>
       </wsse:Security>
    </soapenv:Header>
@@ -153,7 +153,7 @@ def filer_consent(ic)
             <wsse:Username>#{CURAM_ESB_SOAP[:usercredentials][0]}</wsse:Username>
             <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">#{CURAM_ESB_SOAP[:usercredentials][1]}</wsse:Password>
             <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">z2wMNAsg9xfrwv4+gKKBqQ==</wsse:Nonce>
-            <wsu:Created>2017-10-23T15:23:04.147Z</wsu:Created>
+            <wsu:Created>#{Time.now}</wsu:Created>
          </wsse:UsernameToken>
       </wsse:Security>
    </soapenv:Header>
@@ -194,7 +194,7 @@ payload = {
 }
 
 $LOG.info("Log Curam Ancillary Intake: #{payload.to_s.gsub("=>", ":")}\n\n")
-application_in_res = RestClient.post('prod-safe-haven/external_log_test.php', payload.to_s.gsub("=>", ":"), {content_type: :"application/json", accept: :"application/json"})
+application_in_res = RestClient.post(HAVEN_WEB_SERVICES[:c2h_external_log_test], payload.to_s.gsub("=>", ":"), {content_type: :"application/json", accept: :"application/json"})
 $LOG.info("Log curam Ancillary response body: #{application_in_res.body}")
 application_in_res.body
 end
