@@ -145,7 +145,7 @@ payload = {
 }
 
 $LOG.info("Log Curam Ancillary Intake: #{payload.to_s.gsub("=>", ":")}\n\n")
-application_in_res = RestClient.post('newsafehaven.dcmic.org/external_log_test.php', payload.to_s.gsub("=>", ":"), {content_type: :"application/json", accept: :"application/json"})
+application_in_res = RestClient.post(HAVEN_WEB_SERVICES[:c2h_external_log_test], payload.to_s.gsub("=>", ":"), {content_type: :"application/json", accept: :"application/json"})
 $LOG.info("Log curam Ancillary response body: #{application_in_res.body}")
 application_in_res.body
 end
