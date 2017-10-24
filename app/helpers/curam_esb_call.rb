@@ -42,18 +42,6 @@ end #begin end
 end	#method end
 
 
-def self.empty_xml_check
-#pending
-end
-
-# def self.haven(ic)
-# 	payload = {"icNumber" => "#{ic.to_s}"}.to_s.gsub("=>", ":")
-# 	res = RestClient.post('newsafehaven.dcmic.org/enroll_app_system_wrapper.php', payload, {content_type: :"application/xml", accept: :"application/json"})
-#     #puts res.body.class
-#     doc = Nokogiri::XML res
-#     doc.to_xml
-# end
-
 end
 
 
