@@ -21,14 +21,28 @@ def initialize(*arg)
 @client = Savon.client(savon_config)
 @ic = arg[0]
 #@client.operations => [:curam_user_look_up, :five_year_bar, :income_pull, :deductions, :tax_dependents, :filer_consent]
+@payload_header = %Q{<soapenv:Header>
+      <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken wsu:Id="UsernameToken-E7F1EEEE943B258D3215089397579941">
+            <wsse:Username>#{CURAM_ESB_SOAP[:usercredentials][0]}</wsse:Username>
+            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">#{CURAM_ESB_SOAP[:usercredentials][1]}</wsse:Password>
+            <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">yh3AxA8d/3vl40Fsqb3oUg==</wsse:Nonce>
+            <wsu:Created>#{Time.now}</wsu:Created>
+         </wsse:UsernameToken>
+      </wsse:Security>
+   </soapenv:Header>}
 end
 
 
+def header
+   payload
+
+end
 
 def incomes(concern_role_id)
 
 payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:inc="http://xmlns.oracle.com/pcbpel/adapter/db/sp/IncomeReqService">
-   <soapenv:Header/>
+   #{@payload_header}
    <soapenv:Body>
       <inc:IncomeInputParameters>
          <!--Optional:-->
@@ -48,7 +62,7 @@ end
 def five_year_bar(concern_role_id) #payload have 2 arguements IC and Concern role ID
 #1176119585045217280
 payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:fiv="http://xmlns.oracle.com/pcbpel/adapter/db/sp/FiveYearBarService">
-   <soapenv:Header/>
+   #{@payload_header}
    <soapenv:Body>
       <fiv:InputParameters>
          <!--Optional:-->
@@ -70,7 +84,7 @@ end
 def deductions(concern_role_id)
    #-4291220057293324288
    payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ded="http://xmlns.oracle.com/pcbpel/adapter/db/sp/DeductionsService">
-   <soapenv:Header/>
+   #{@payload_header}
    <soapenv:Body>
       <ded:DeductionsInput>
          <!--Optional:-->
@@ -89,7 +103,7 @@ end
 def tax_dependents(concern_role_id)
    #6194000082497437696 Venu testcase filer 2 dependents
    payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tax="http://xmlns.haven.dc.govcom/haven/taxdepdetailsin">
-   <soapenv:Header/>
+   #{@payload_header}
    <soapenv:Body>
       <tax:TaxDep_InputParameters>
          <!--Optional:-->
@@ -110,7 +124,7 @@ def filer_consent(ic)
    #ic : 4150378
    puts "IC: #{@ic}"
    payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:fil="http://xmlns.haven.dc.govcom/haven/FilerConsentIn">
-   <soapenv:Header/>
+   #{@payload_header}
    <soapenv:Body>
       <fil:TaxDep_InputParameters>
          <fil:IC_Input_List>#{ic}</fil:IC_Input_List>
@@ -156,7 +170,7 @@ end
 end #class end
 
 
-#puts "value:#{Ancillary_ESB_Calls.new.five_year_bar(2125465, -2523010797811007488)}"
+#puts "value:#{Ancillary_ESB_Calls.new(2125465).five_year_bar(-2523010797811007488)}"
 #puts "value:#{Ancillary_ESB_Calls.new.filer_consent(2099584)}"
 #puts "value:#{Ancillary_ESB_Calls.new.incomes(6507753396294909952)}"
 
