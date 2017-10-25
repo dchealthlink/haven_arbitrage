@@ -122,13 +122,12 @@ end
 
 def filer_consent(ic)
    #ic : 4150378
-   puts "IC: #{@ic}"
    payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:fil="http://xmlns.haven.dc.govcom/haven/FilerConsentIn">
    #{@payload_header}
    <soapenv:Body>
-      <fil:TaxDep_InputParameters>
+      <fil:Filer_InputParameters>
          <fil:IC_Input_List>#{ic}</fil:IC_Input_List>
-      </fil:TaxDep_InputParameters>
+      </fil:Filer_InputParameters>
    </soapenv:Body>
 </soapenv:Envelope>}
 
@@ -170,22 +169,12 @@ end
 end #class end
 
 
-#puts "value:#{Ancillary_ESB_Calls.new(2125465).five_year_bar(-2523010797811007488)}"
-#puts "value:#{Ancillary_ESB_Calls.new.filer_consent(2099584)}"
-#puts "value:#{Ancillary_ESB_Calls.new.incomes(6507753396294909952)}"
 
-# @ancillary_esb_calls = Ancillary_ESB_Calls.new(3741790085394202624)
-# @tax_dependents = @ancillary_esb_calls.tax_dependents
-# puts "Value : #{@tax_dependents}"
-# @tax_dependents.each do |tax_dependents|
-# if tax_dependents.search("*").text != ""
-#   tax_dependents.search("tax_dependent").each do |dependent|
-#    puts "dependent inspect: #{dependent}"
-# end
-# end
-# end
-  
-
+# puts "value:#{Ancillary_ESB_Calls.new(2217363).five_year_bar(2929548264334163968)}"
+# puts "value:#{Ancillary_ESB_Calls.new(2217363).tax_dependents(2929548264334163968)}"
+# puts "value:#{Ancillary_ESB_Calls.new(2217363).incomes(2929548264334163968)}"
+# puts "value:#{Ancillary_ESB_Calls.new(2217363).deductions(2929548264334163968)}"
+# puts "value:#{Ancillary_ESB_Calls.new(2217363).filer_consent(2217363)}"
 
 
 
