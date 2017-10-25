@@ -45,14 +45,16 @@ income_block
 end
 
 
-def five_year_bar(concern_role_id)
+def five_year_bar(concern_role_id) #payload have 2 arguements IC and Concern role ID
 #1176119585045217280
 payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:fiv="http://xmlns.oracle.com/pcbpel/adapter/db/sp/FiveYearBarService">
    <soapenv:Header/>
    <soapenv:Body>
       <fiv:InputParameters>
          <!--Optional:-->
-         <fiv:I_CONCERNROLEID>#{concern_role_id}</fiv:I_CONCERNROLEID>
+         <fiv:i_IC>#{@ic}</fiv:i_IC>
+         <!--Optional:-->
+         <fiv:i_concernroleid>#{concern_role_id}</fiv:i_concernroleid>
       </fiv:InputParameters>
    </soapenv:Body>
 </soapenv:Envelope>}
@@ -154,7 +156,7 @@ end
 end #class end
 
 
-#puts "value:#{Ancillary_ESB_Calls.new.five_year_bar(1176119585045217280)}"
+#puts "value:#{Ancillary_ESB_Calls.new.five_year_bar(2125465, -2523010797811007488)}"
 #puts "value:#{Ancillary_ESB_Calls.new.filer_consent(2099584)}"
 #puts "value:#{Ancillary_ESB_Calls.new.incomes(6507753396294909952)}"
 
