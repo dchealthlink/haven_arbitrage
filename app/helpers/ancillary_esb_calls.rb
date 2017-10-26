@@ -34,11 +34,6 @@ def initialize(*arg)
 end
 
 
-def header
-   payload
-
-end
-
 def incomes(concern_role_id)
 
 payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:inc="http://xmlns.oracle.com/pcbpel/adapter/db/sp/IncomeReqService">
