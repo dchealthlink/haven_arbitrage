@@ -3,6 +3,7 @@ require 'nokogiri'
 require 'json'
 require 'logger'
 require './app/helpers/publish.rb'
+require './config/secret.rb'
 
 $CURAM_LOG = Logger.new('./log/curam.log', 'monthly')
 

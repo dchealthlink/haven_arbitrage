@@ -16,7 +16,8 @@ def initialize(*arg)
    :read_timeout => 100,
    :log => true,
   #:log_level => :debug,
-   :logger => $LOG
+   :logger => $LOG,
+   :wsse_auth => CURAM_ESB_SOAP[:usercredentials]
 }
 @client = Savon.client(savon_config)
 @ic = arg[0]
@@ -35,7 +36,6 @@ end
 
 
 def incomes(concern_role_id)
-
 payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:inc="http://xmlns.oracle.com/pcbpel/adapter/db/sp/IncomeReqService">
    #{@payload_header}
    <soapenv:Body>
@@ -66,7 +66,8 @@ payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/en
          <fiv:i_concernroleid>#{concern_role_id}</fiv:i_concernroleid>
       </fiv:InputParameters>
    </soapenv:Body>
-</soapenv:Envelope>}
+</soapenv:Envelope>
+ }
 
 response = @client.call(:five_year_bar, xml: payload)
 fyb_block = Nokogiri::XML(response.xml).remove_namespaces!
@@ -124,7 +125,8 @@ def filer_consent(ic)
          <fil:IC_Input_List>#{ic}</fil:IC_Input_List>
       </fil:Filer_InputParameters>
    </soapenv:Body>
-</soapenv:Envelope>}
+</soapenv:Envelope>
+ }
 
 response = @client.call(:filer_consent, xml: payload)
 filer_consent_block = Nokogiri::XML(response.xml).remove_namespaces!
@@ -162,8 +164,6 @@ end
 
 
 end #class end
-
-
 
 # puts "value:#{Ancillary_ESB_Calls.new(2217363).five_year_bar(2929548264334163968)}"
 # puts "value:#{Ancillary_ESB_Calls.new(2217363).tax_dependents(2929548264334163968)}"
