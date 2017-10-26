@@ -36,7 +36,7 @@ begin
 rescue 
 	Slack_it.new.notify("IC:#{ic}  No data from curam (500/Timeout/No data). <@mamatha.burujukati>, <@rahulch>, <@venumadhav> :trumpet:")
 else
-	$CURAM_LOG.info("XML recieved from curam for IC:#{ic}\n#{Nokogiri::XML(response.xml.to_s).to_xml}")
+	$CURAM_LOG.info("XML received from curam for IC:#{ic}\n#{Nokogiri::XML(response.xml.to_s).to_xml}")
 	response.xml
 end #begin end
 end	#method end

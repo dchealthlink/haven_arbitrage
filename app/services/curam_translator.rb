@@ -50,9 +50,9 @@ end
 	    if validator.check_syntax_error.any?
 	   		error_message = validator.get_syntax_error_message
 	   		#todo where to notify if invalid xml recieved
-	   		Slack_it.new.notify("Curam payload recieved with IC: #{@ic_hash[:ic]} and xml for this IC is invalid with following errors.\nSyntax errors found: #{error_message}")
+	   		Slack_it.new.notify("Curam payload received with IC: #{@ic_hash[:ic]} and xml for this IC is invalid with following errors.\nSyntax errors found: #{error_message}")
 	   	else
-	   		Slack_it.new.notify("Curam payload recieved with IC: #{@ic_hash[:ic]} and xml for this IC is valid")
+	   		Slack_it.new.notify("Curam payload received with IC: #{@ic_hash[:ic]} and xml for this IC is valid")
 	    complete = store_to_haven_db(curam_response)
 	    consistent = curam_inconsistent_app_check
 	    if ( complete && consistent )
