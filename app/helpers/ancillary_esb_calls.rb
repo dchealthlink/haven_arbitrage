@@ -135,6 +135,26 @@ $LOG.info(filer_consent_block.to_xml)
 filer_consent_block.xpath("//filer_consent").children.to_s
 end   
 
+def is_resident(concern_role_id)
+   payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:isr="http://xmlns.oracle.com/pcbpel/adapter/db/sp/IsResidentReqService">
+   #{@payload_header}
+   <soapenv:Body>
+      <isr:IsResidentInputParameters>
+         <!--Optional:-->
+         <isr:i_IC>#{@ic}</isr:i_IC>
+         <!--Optional:-->
+         <isr:i_CRID>#{concern_role_id}</isr:i_CRID>
+      </isr:IsResidentInputParameters>
+   </soapenv:Body>
+</soapenv:Envelope>}
+
+response = @client.call(:is_resident, xml: payload)
+is_resident_block = Nokogiri::XML(response.xml).remove_namespaces!
+haven_ext_log("concern_role_id", concern_role_id, "Is Resident", response)
+$LOG.info(is_resident_block.to_xml)
+is_resident_block.at_xpath("//is_resident")
+end
+
 
 def haven_ext_log(keyindex, keyvalue, keytype, payload)
 payload = {
@@ -170,6 +190,7 @@ end #class end
 # puts "value:#{Ancillary_ESB_Calls.new(2217363).incomes(2929548264334163968)}"
 # puts "value:#{Ancillary_ESB_Calls.new(2217363).deductions(2929548264334163968)}"
 # puts "value:#{Ancillary_ESB_Calls.new(2217363).filer_consent(2217363)}"
+#puts "value:#{Ancillary_ESB_Calls.new(3570910).is_resident(-2523010797811007488)}"
 
 
 
