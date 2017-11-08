@@ -17,7 +17,8 @@ class Curam_Translator
 
 
 def create_channel(host, vhost, port, user, password)
-      @conn = Bunny.new(:hostname => host, :vhost => vhost, :port => port, :user => user, :password => password)
+      @conn = Bunny.new(:hostname => host, :vhost => vhost, :port => port, :user => user, :password => password,
+                        :heartbeat => 120, :automatically_recover => true, :recover_from_connection_close => true)
       @conn.start
       ch = @conn.create_channel
       #ch.prefetch(1)
