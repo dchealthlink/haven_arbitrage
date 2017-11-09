@@ -17,8 +17,9 @@ module Store
   extend Publish
 
 #adding req_type from IC payload structure to finapp_in table for projected eligibility
-def req_type(req_type)
+def ic_payload_params(req_type, timestamp)
 @req_type = req_type
+@ic_timestamp = timestamp
 end
 
 def payload_post(payload)
@@ -29,7 +30,9 @@ def payload_post(payload)
     
    if @payload["Location"] == "application_in" 
       #fix this
-      $icid =  JSON.parse(application_in_res.body)["Return"].first["icid"]
+      json_response =  JSON.parse(application_in_res.body)["Return"].first
+      $icid = json_response["icid"]
+      $application_in_table_response = json_response["response"]
    end
 
    $CURAM_LOG.info("#{application_in_res}\n\n")
@@ -267,13 +270,17 @@ application_in_payload = {
  "Action" => "INSERT",
  "Location" => "application_in",
  "xaid" => "#{SecureRandom.uuid}",
- "Data" => [((@req_type != nil && @req_type != "") ? data_block("application", "application_in", @curam_xml).merge!("reqtype" => @req_type) : data_block("application", "application_in", @curam_xml))]
+ "Data" => [((@req_type != nil && @req_type != "") ? data_block("application", "application_in", @curam_xml).merge!("reqtype" => @req_type, "curamtimestamp" => @ic_timestamp) : data_block("application", "application_in", @curam_xml).merge!("curamtimestamp" => @ic_timestamp))]
 
 }
 
 
 @application_in = payload_post(application_in_payload)
 
+
+if $application_in_table_response == "Duplicate IC Number"
+  return
+end
 #**************************************************************#
 
 
