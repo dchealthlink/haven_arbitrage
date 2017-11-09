@@ -71,8 +71,10 @@ end
 		xml = Nokogiri::XML(body)
 		@ic_hash = {}
 		@ic_hash[:ic] = xml.search("IntegratedCase_ID").text
-		@req_type = xml.search("req_type").text 
-		req_type(@req_type)
+		@req_type = xml.search("req_type").text
+		@timestamp = xml.search("TimeStamp").text
+		puts "The *timestamp: #{@timestamp}"
+ 		ic_payload_params(@req_type, @timestamp)
 		#message_hash[:some_value] = xml.search("some_value").text  Soon an additional field will add to IC payload structure
 		@ic_hash
 	end
