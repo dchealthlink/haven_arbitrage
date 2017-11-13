@@ -279,7 +279,7 @@ application_in_payload = {
 
 
 if $application_in_table_response == "Duplicate IC Number"
-  return
+  return true
 end
 #**************************************************************#
 

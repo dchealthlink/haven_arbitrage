@@ -32,11 +32,11 @@ end
       $CURAM_LOG.info("[*] Waiting for messages. on Queue: #{RABBIT_QUEUES[:curam_ic]} To exit press CTRL+C")
 
 		begin
-		  q.subscribe(:manual_ack => true, :block => true) do |delivery_info, properties, body|
+		  q.subscribe(:manual_ack => false, :block => true) do |delivery_info, properties, body|
 		  	$CURAM_LOG.info("Received: delivery_info:  #{delivery_info}\nproperties:  #{properties}\nbody:  #{body}\n")
 		    parse_queue_message(body.to_s)
 		    process
-		    ch.ack(delivery_info.delivery_tag)
+		    #ch.ack(delivery_info.delivery_tag)
 	  	    $CURAM_LOG.info("[x] Finshed with Curam XML translation")
 		   end
 		rescue Interrupt => _
@@ -57,9 +57,9 @@ end
 	    complete = store_to_haven_db(curam_response)
 	    consistent = curam_inconsistent_app_check
 	    if ( complete && consistent )
+	    	EA_Response_builder.call_haven(curam_response)
 	    	Slack_it.new.notify("\nIt is a complete and consistent application\n****************************\n")
 	    	puts "***********************Hurray validations success******************************"
-	    EA_Response_builder.call_haven(curam_response)
 	    else
 	    	Slack_it.new.notify("\nbut it is an incomplete or inconsistent application\n****************************\n")
 	    end
