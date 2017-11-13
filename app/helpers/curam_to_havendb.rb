@@ -293,10 +293,14 @@ end
 @ancillary_esb_calls = Ancillary_ESB_Calls.new(@integrated_case_reference)
 @five_year_bar = @ancillary_esb_calls.five_year_bar(@concern_role_id)
 @filer_consent = @ancillary_esb_calls.filer_consent(@integrated_case_reference)
-  
+@is_resident =   @ancillary_esb_calls.is_resident(@concern_role_id)  
+
 applicant.add_child(@five_year_bar)
 applicant.add_child(@filer_consent)
-  puts "applicant is : #{applicant}"
+applicant.search("is_resident").first.children=@is_resident
+
+
+puts "applicant is : #{applicant}"
 
    
 
@@ -370,7 +374,10 @@ end
 #**************************************************************************************#
 
 #***********************************Benefits******************************************
-applicant.search("benefit").each do |benefit|
+#applicant.search("benefit").each do |benefit|
+@Benefits = @ancillary_esb_calls.insurance(@concern_role_id)
+
+@Benefits.each do |benefit|
 
 if benefit.search("*").text != ""  
   application_person_benefit_in_payload = {

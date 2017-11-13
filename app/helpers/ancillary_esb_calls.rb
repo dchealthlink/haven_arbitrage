@@ -152,7 +152,24 @@ response = @client.call(:is_resident, xml: payload)
 is_resident_block = Nokogiri::XML(response.xml).remove_namespaces!
 haven_ext_log("concern_role_id", concern_role_id, "Is Resident", response)
 $LOG.info(is_resident_block.to_xml)
-is_resident_block.at_xpath("//is_resident")
+is_resident_block.at_xpath("//is_resident").text.to_s
+end
+
+def insurance(concern_role_id)
+   payload = %Q{<soapenv:Envelope xmlns:req="https://openhbx.gov/haven/insurancedetails/request" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   #{@payload_header}
+   <soapenv:Body>
+      <req:InsurnaceInput>
+         <req:I_CONCERNROLEID>#{concern_role_id}</req:I_CONCERNROLEID>
+      </req:InsurnaceInput>
+   </soapenv:Body>
+</soapenv:Envelope>}
+
+response = @client.call(:insurance, xml: payload)
+insurance_block = Nokogiri::XML(response.xml).remove_namespaces!.search("benefit")
+haven_ext_log("concern_role_id", concern_role_id, "Insurance", response)
+$LOG.info(insurance_block.to_xml)
+insurance_block
 end
 
 
@@ -190,7 +207,7 @@ end #class end
 # puts "value:#{Ancillary_ESB_Calls.new(2217363).incomes(2929548264334163968)}"
 # puts "value:#{Ancillary_ESB_Calls.new(2217363).deductions(2929548264334163968)}"
 # puts "value:#{Ancillary_ESB_Calls.new(2217363).filer_consent(2217363)}"
-#puts "value:#{Ancillary_ESB_Calls.new(3570910).is_resident(-2523010797811007488)}"
+#puts "value:#{Ancillary_ESB_Calls.new(3570910).is_resident(-8102400690883657728)}"
 
 
 
