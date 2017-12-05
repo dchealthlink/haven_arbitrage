@@ -19,3 +19,4 @@ config/secret.rb
 config/database.yml
 config/*
 .DS_Store
+doc/*

@@ -547,7 +547,7 @@ def add_headers_to_finapp_in
 #sample properties data properties = {:content_type=>"application/octet-stream", :headers=>{"submitted_timestamp"=>"2017-07-13 14:57:09 -0400", "correlation_id"=>"22236845cc70442fa0039c5b20c23c28", "family_id"=>"5967bebed7c2dc110200000a", "application_id"=>"5967beddd7c2dc0bd1000000"}, :delivery_mode=>2, :priority=>0, :correlation_id=>"22236845cc70442fa0039c5b20c23c28", :timestamp=>"2017-07-13 14:57:09 -0400", :app_id=>"enroll"}
 
 #*********Note: please confirm naming conventions of keys
-headers_mapping = { "correlation_id" => "correlationid", "family_id" => "familyid", "primary_applicant_id" => "primaryapplicantid", "havenic_id" => "havenicid", "ecase_id" => "ecaseid"}
+headers_mapping = { "assistance_application_id" => "assistanceapplicationid", "correlation_id" => "correlationid", "family_id" => "familyid", "primary_applicant_id" => "primaryapplicantid", "havenic_id" => "havenicid", "ecase_id" => "ecaseid"}
 
 @headers = @properties[:headers]	
 finapp_in_headers = []
