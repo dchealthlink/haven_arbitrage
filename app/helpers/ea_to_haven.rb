@@ -73,7 +73,6 @@ fieldname = record.first.targetfield unless record.empty?
 
 
 @tablename_array << tablename if (!@tablename_array.include?(tablename) && tablename != nil)
-@tablename_array << "finapp_header"  #for storing EA headers in finapp_header table
 
 if @sv != nil 
 @sv.each do |key, value|
@@ -517,7 +516,7 @@ $EA_LOG.info("***********************\n\nThe Holy moly Big Array:\n #{arr.inspec
 
 
 
-
+@tablename_array << "finapp_header"  #for storing EA headers in finapp_header table
 @tablename_array.each do |tn|
 
 @table_arr = arr.select do |value|
