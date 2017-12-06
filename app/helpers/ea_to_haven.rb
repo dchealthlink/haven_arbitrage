@@ -557,6 +557,7 @@ headers_mapping.each do |key, value|
 	finapp_in_headers << [@faa_id, "finapp_header", nil, nil, nil, nil, value, result]
 	end #if end
 end #do end
+finapp_in_headers.delete_if {|arr| arr[-2] == "submittedtimestamp" && arr[1] == "finapp_in"}
 return finapp_in_headers
 end #add_headers_to_finapp_in  end
 
