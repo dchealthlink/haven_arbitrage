@@ -6,8 +6,9 @@ require 'logger'
 require './app/models/application_xlate.rb'
 require './app/helpers/publish.rb'
 require "./app/notifications/slack_notifier.rb"
+require "./app/helpers/ancillary_esb_calls.rb"
+require './config/secret.rb'
 $CURAM_LOG = Logger.new('./log/curam.log', 'monthly')
-
 
 
 
@@ -16,19 +17,22 @@ module Store
   extend Publish
 
 #adding req_type from IC payload structure to finapp_in table for projected eligibility
-def req_type(req_type)
+def ic_payload_params(req_type, timestamp)
 @req_type = req_type
+@ic_timestamp = timestamp
 end
 
 def payload_post(payload)
   @payload = payload
    post_payload = @payload.to_s.gsub("=>", ":")
    $CURAM_LOG.info("#{"*"*100}\n#{@payload}\n\n")
-   application_in_res = RestClient.post('newsafehaven.dcmic.org/arb_input_wrapper.php', post_payload, {content_type: :"application/xml", accept: :"application/json"})
+   application_in_res = RestClient.post(HAVEN_WEB_SERVICES[:c2h_arb_input_wrapper], post_payload, {content_type: :"application/xml", accept: :"application/json"})
     
    if @payload["Location"] == "application_in" 
       #fix this
-      $icid =  JSON.parse(application_in_res.body)["Return"].first["icid"]
+      json_response =  JSON.parse(application_in_res.body)["Return"].first
+      $icid = json_response["icid"]
+      $application_in_table_response = json_response["response"]
    end
 
    $CURAM_LOG.info("#{application_in_res}\n\n")
@@ -40,7 +44,7 @@ end
 def application_in_status(statustype)
  notice_payload = {"Action"=>"INSERT", "Location"=>"application_in_status", "xaid"=>"#{SecureRandom.uuid}", "Data"=>[{"keyfld"=>"#{@integrated_case_reference}", "keyid"=>"#{$icid}", "icnumber"=>"#{@integrated_case_reference}", "icid"=>"#{$icid}",
                    "statustype"=>"#{statustype}", "statustimestamp"=>"#{Time.now}", "applicationsource"=>"curam"}]}
- application_in_status = RestClient.post('newsafehaven.dcmic.org/arb_input_wrapper.php', notice_payload.to_s.gsub("=>", ":"), {content_type: :"application/xml", accept: :"application/json"})
+ application_in_status = RestClient.post(HAVEN_WEB_SERVICES[:c2h_arb_input_wrapper], notice_payload.to_s.gsub("=>", ":"), {content_type: :"application/xml", accept: :"application/json"})
  puts "Notice Payload: #{notice_payload}\n\n Application in status: #{application_in_status}"
 end  
 
@@ -48,7 +52,7 @@ end
 def curam_incomplete_app_check
 
 if !@notice.empty? && (@payload["Location"] == "application_pdc_person_in")
- message = "IC: #{@integrated_case_reference}\n\nInfo: \n#{@notice.join(" \n")} \n\n\n Thanks,\n -Arbitrage"
+ message = "IC: #{@integrated_case_reference}\n\nInfo: \n#{@notice.join(" \n")} \n"
  email_notice(message)
  Slack_it.new.notify(message)  #slack notification
  application_in_status("incomplete")
@@ -80,10 +84,9 @@ mandatory_fields.uniq { |value| value.targetfield }.each do |value|
 end
   unless @missing_fields.empty?
     message = "IC: #{@payload["Data"].first["icnumber"]}\n\nError: <#{@missing_fields.join(", ")}> value missing in curam data
-                \n\n\n Thanks,\n -Arbitrage"
+                \n"
     email_notice(message)
     Slack_it.new.notify(message)
-    validation_log
   end
 #puts "tf: #{tf}"
 return tf.all? {|value| value == true} ? true : false
@@ -95,17 +98,15 @@ def curam_inconsistent_app_check
  
   if @curam_xml.xpath("//curam_applicant").count >= 2 && @curam_xml.xpath("//relationship").text.strip.empty?
     message = "Hello\n\n IC: #{@integrated_case_reference}\n\nError: No relationship data found in curam xml
-                \n\n\n\n\n Thanks,\n -Arbitrage"
+                \n"
     email_notice(message)
     Slack_it.new.notify(message)
-    #validation_log
     application_in_status("inconsistent")
     return false
   # elsif curam_response.xpath("//relationship").text.include?("Is Unrelated to")
   #    message = "Hello\n\n IC: #{ic}\n\nError: There is an unrelated applicant in this application and we don't like that.
   #               \n\n\n\n\n Thanks,\n -Arbitrage"
   #   email_notice(message)
-  #   validation_log
   #   return false
   else
     return true
@@ -135,7 +136,7 @@ payload = {
 }
 
 puts "Log Curam Intake: #{payload.to_s.gsub("=>", ":")}\n\n"
-application_in_res = RestClient.post('newsafehaven.dcmic.org/external_log_test.php', payload.to_s.gsub("=>", ":"), {content_type: :"application/json", accept: :"application/json"})
+application_in_res = RestClient.post(HAVEN_WEB_SERVICES[:c2h_external_log_test], payload.to_s.gsub("=>", ":"), {content_type: :"application/json", accept: :"application/json"})
 puts "Log curam response body: #{application_in_res.body}"
 application_in_res.body
 end
@@ -150,7 +151,7 @@ end
 def curam_xlate(st, tt, sf, tf, sv)
   
   check_flag =  @application_xlate.select do |value|
-     value[:targettype] == "#{tt}" && value[:sourcefield] == "#{sf}" && value[:targetfield] == "#{tf}"
+     value[:targettype] == "#{tt}" && value[:sourcefield].downcase == "#{sf}".downcase && value[:targetfield] == "#{tf}"
   end
 
 if check_flag.any? && sv != ""
@@ -170,7 +171,7 @@ if check_flag.any? && sv != ""
 check_flag.each do |value|
    case value.siflag 
     when "N"
-    xlate =  check_flag.select { |value| value[:targettype] == "#{tt}" && value[:sourcefield] == "#{sf}" && value[:sourcevalue] == "#{sv}" }
+    xlate =  check_flag.select { |value| value[:targettype] == "#{tt}" && value[:sourcefield].downcase == "#{sf}".downcase && value[:sourcevalue].downcase == "#{sv}".downcase }
       #value[:sourcein] == "curam" && value[:targetout] == "haven" && value[:targettype] == "application_person_income_in" && value[:sourcefield] == "end_date" && value[:sourcevalue] == "2017-12-01"
     #   puts xlate.inspect
     # #puts "----------------#{sv}---------------------------"
@@ -217,10 +218,18 @@ def data_block(st, tt, records)
 arr = @application_xlate.select { |value| value[:targettype] == tt }
 hs = {}
 #puts "In fields:  #{arr}" 
-arr.uniq { |value| value.targetfield }.each do |val|
+arr.uniq { |value| (value.targetfield) }.each do |val|
+  #arr.uniq { |value| (value.targetfield && value.sourcefield) }.each do |val|
   
+    
   source_value = curam_xlate(st, tt, val.sourcefield, val.targetfield, xml_search(records, val.sourcefield))
   hs[val.targetfield.to_s] = source_value if (source_value != "" && source_value.class.to_s != "Array")
+
+# Dirty patch for deductions type field
+  # if val.targetfield == "incometype"
+  #   source_value = curam_xlate(st, tt, "type", val.targetfield, xml_search(records, "type"))
+  #   hs[val.targetfield.to_s] = source_value if (source_value != "" && source_value.class.to_s != "Array")
+  # end
   
 end
 hs.merge!("icnumber" => @integrated_case_reference)
@@ -261,13 +270,17 @@ application_in_payload = {
  "Action" => "INSERT",
  "Location" => "application_in",
  "xaid" => "#{SecureRandom.uuid}",
- "Data" => [((@req_type != nil && @req_type != "") ? data_block("application", "application_in", @curam_xml).merge!("reqtype" => @req_type) : data_block("application", "application_in", @curam_xml))]
+ "Data" => [((@req_type != nil && @req_type != "") ? data_block("application", "application_in", @curam_xml).merge!("reqtype" => @req_type, "curamtimestamp" => @ic_timestamp) : data_block("application", "application_in", @curam_xml).merge!("curamtimestamp" => @ic_timestamp))]
 
 }
 
 
 @application_in = payload_post(application_in_payload)
 
+
+if $application_in_table_response == "Duplicate IC Number"
+  return true
+end
 #**************************************************************#
 
 
@@ -275,7 +288,21 @@ application_in_payload = {
 #****************************Person In payload****************************************#
 @curam_xml.xpath("//curam_applicant").each_with_index do |applicant, applicant_num|
 
-   @concern_role_id = applicant.search("concern_role_id").text.to_s 
+  @concern_role_id = applicant.search("concern_role_id").text.to_s 
+#Add five year bar to person level
+@ancillary_esb_calls = Ancillary_ESB_Calls.new(@integrated_case_reference)
+@five_year_bar = @ancillary_esb_calls.five_year_bar(@concern_role_id)
+@filer_consent = @ancillary_esb_calls.filer_consent(@integrated_case_reference)
+@is_resident =   @ancillary_esb_calls.is_resident(@concern_role_id)  
+
+applicant.add_child(@five_year_bar)
+applicant.add_child(@filer_consent)
+applicant.search("is_resident").first.children=@is_resident
+
+
+puts "applicant is : #{applicant}"
+
+   
 
 
 @curam_xml.search("pdc_applicant").each do |pdc_person|
@@ -324,8 +351,11 @@ end
 
 #**********************************Income*********************************************#
 @incomeid = 1
-applicant.search("income").each do |income|
+@incomes = @ancillary_esb_calls.incomes(@concern_role_id)
 
+#applicant.search("income").each do |income|
+
+@incomes.each do |income|
 if income.search("*").text != ""  
 
 application_person_income_in_payload = { 
@@ -343,9 +373,36 @@ end
 end
 #**************************************************************************************#
 
+#***********************************Benefits******************************************
+#applicant.search("benefit").each do |benefit|
+@Benefits = @ancillary_esb_calls.insurance(@concern_role_id)
+
+@Benefits.each do |benefit|
+
+if benefit.search("*").text != ""  
+  application_person_benefit_in_payload = {
+
+ "Action" => "INSERT",
+ "Location" => "application_person_benefit_in",
+ "xaid" => "#{SecureRandom.uuid}",
+ "Data" => [data_block("benefit", "application_person_benefit_in", benefit).merge!("personid" => @concern_role_id.to_s, "icid" => $icid)]
+  
+  }
+
+@application_person_benefit_in = payload_post(application_person_benefit_in_payload)
+end
+end
+
+
+#*************************************************************************************
+
+
+
 #***********************************Deductions****************************************
 # #Note: Income and deductions store in same table --> "application_person_income_in"
-applicant.search("deduction").each do |deduction|
+@deductions = @ancillary_esb_calls.deductions(@concern_role_id)
+#applicant.search("deduction").each do |deduction|
+@deductions.each do |deduction| 
 
 if deduction.search("*").text != ""  
 
@@ -404,7 +461,11 @@ case applicant.search("tax_filing_status").text
   @application_tax_in = payload_post(application_tax_in_payload)
 #Filer's dependents post
 
-applicant.search("tax_dependents").each do |tax_dependents|
+#applicant.search("tax_dependents").each do |tax_dependents|
+
+@tax_dependents = @ancillary_esb_calls.tax_dependents(@concern_role_id)
+
+@tax_dependents.each do |tax_dependents|
 if tax_dependents.search("*").text != ""
   tax_dependents.search("tax_dependent").each do |dependent|
   

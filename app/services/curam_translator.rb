@@ -17,9 +17,10 @@ class Curam_Translator
 
 
 def create_channel(host, vhost, port, user, password)
-      conn = Bunny.new(:hostname => host, :vhost => vhost, :port => port, :user => user, :password => password)
-      conn.start
-      ch = conn.create_channel
+      @conn = Bunny.new(:hostname => host, :vhost => vhost, :port => port, :user => user, :password => password,
+                        :heartbeat => 120, :automatically_recover => true, :recover_from_connection_close => true)
+      @conn.start
+      ch = @conn.create_channel
       #ch.prefetch(1)
       return ch
 end
@@ -39,7 +40,7 @@ end
 	  	    $CURAM_LOG.info("[x] Finshed with Curam XML translation")
 		   end
 		rescue Interrupt => _
-		  #conn.close
+		  @conn.close
 		end	
 	end
 
@@ -50,15 +51,15 @@ end
 	    if validator.check_syntax_error.any?
 	   		error_message = validator.get_syntax_error_message
 	   		#todo where to notify if invalid xml recieved
-	   		Slack_it.new.notify("Curam payload recieved with IC: #{@ic_hash[:ic]} and xml for this IC is invalid with following errors.\nSyntax errors found: #{error_message}")
+	   		Slack_it.new.notify("Curam payload received with IC: #{@ic_hash[:ic]} and xml for this IC is invalid with following errors.\nSyntax errors found: #{error_message}")
 	   	else
-	   		Slack_it.new.notify("Curam payload recieved with IC: #{@ic_hash[:ic]} and xml for this IC is valid")
+	   		Slack_it.new.notify("Curam payload received with IC: #{@ic_hash[:ic]} and xml for this IC is valid")
 	    complete = store_to_haven_db(curam_response)
 	    consistent = curam_inconsistent_app_check
 	    if ( complete && consistent )
+	    	EA_Response_builder.call_haven(curam_response)
 	    	Slack_it.new.notify("\nIt is a complete and consistent application\n****************************\n")
 	    	puts "***********************Hurray validations success******************************"
-	    EA_Response_builder.call_haven(curam_response)
 	    else
 	    	Slack_it.new.notify("\nbut it is an incomplete or inconsistent application\n****************************\n")
 	    end
@@ -70,8 +71,10 @@ end
 		xml = Nokogiri::XML(body)
 		@ic_hash = {}
 		@ic_hash[:ic] = xml.search("IntegratedCase_ID").text
-		@req_type = xml.search("req_type").text 
-		req_type(@req_type)
+		@req_type = xml.search("req_type").text
+		@timestamp = xml.search("TimeStamp").text
+		puts "The *timestamp: #{@timestamp}"
+ 		ic_payload_params(@req_type, @timestamp)
 		#message_hash[:some_value] = xml.search("some_value").text  Soon an additional field will add to IC payload structure
 		@ic_hash
 	end
