@@ -40,7 +40,8 @@ record = @xlate.select {|rec| (rec.sourcetype == "#{sourcetype.join(".")}" and r
 
 		elsif record.first.siflag == "N"
 			#rec = @xlate.where(["sourcetype=? and sourcefield=? and sourcevalue=?", "#{sourcetype.join(".")}", "#{sourcefield}", "#{strip_tag_value(faa.content)}"])
-			rec = @xlate.select {|rec| (rec.sourcetype == "#{sourcetype.join(".")}" and rec.sourcefield == "#{sourcefield}" and rec.sourcevalue == "#{strip_tag_value(faa.content)}")}
+			sourcevalue = strip_tag_value(faa.content)
+			rec = @xlate.select {|rec| (rec.sourcetype == "#{sourcetype.join(".")}" and rec.sourcefield == "#{sourcefield}" and rec.sourcevalue == ((sourcevalue != "") ? sourcevalue : "default"))}
 			rec_group = rec.group_by(&:targetfield)
 
 			rec_group.keys.each do |key|
@@ -53,8 +54,12 @@ record = @xlate.select {|rec| (rec.sourcetype == "#{sourcetype.join(".")}" and r
 			# else
 			# 	recx_targetvalue = recx.targetvalue
 			# end
-
-			@sv[recx.targetfield] = strip_tag_value(recx.targetvalue)
+			case recx.targetvalue
+			when "default"
+				@sv[recx.targetfield] = recx.defaultvalue
+			else
+				@sv[recx.targetfield] = recx.targetvalue
+			end
 			#sv << recx.targetvalue #unless recx.empty?
 			puts "Source value from siflag N:#{@sv}"
 		    end
@@ -114,8 +119,8 @@ end
 def strip_tag_value(value)
 	if value.include?("#")
 		stripped_value = value.split("#")[-1]
-	elsif value == ""
-		stripped_value = "default"
+	# elsif value == ""
+	# 	stripped_value = "default"
 	else
 		stripped_value = value
 	end
