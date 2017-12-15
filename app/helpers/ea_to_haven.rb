@@ -114,6 +114,8 @@ end
 def strip_tag_value(value)
 	if value.include?("#")
 		stripped_value = value.split("#")[-1]
+	elsif value == ""
+		stripped_value = "default"
 	else
 		stripped_value = value
 	end
