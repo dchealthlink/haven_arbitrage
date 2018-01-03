@@ -18,7 +18,14 @@ class Curam_Translator
 
 def create_channel(host, vhost, port, user, password)
       @conn = Bunny.new(:hostname => host, :vhost => vhost, :port => port, :user => user, :password => password,
-                        :heartbeat => 120, :automatically_recover => true, :recover_from_connection_close => true)
+                        :heartbeat => 120, :automatically_recover => true, :recover_from_connection_close => true,
+                        :tls  => true,
+                        :tls_cert              =>  "/home/arbitrage/arb_certs/cert.pem",
+                        :tls_key               =>  "/home/arbitrage/arb_certs/key.pem",
+                        :tls_ca_certificates   => ["/home/arbitrage/arb_certs/cacert.pem"],
+                        :port                  => 443,
+                 # convenient for dev/QA, please enable in production
+                        :verify_peer           => false)
       @conn.start
       ch = @conn.create_channel
       #ch.prefetch(1)
