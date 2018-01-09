@@ -10,6 +10,8 @@ set :root, File.join(File.dirname(__FILE__), '..')
 # sets the view directory correctly
 set :views, Proc.new { File.join(root, "views") } 
 
+set :public_folder, 'public'
+
 use Rack::Auth::Basic, "Protected Area" do |username, password|
   username == BASIC_AUTH[:user] && password == BASIC_AUTH[:password]
 end
@@ -34,6 +36,10 @@ end
 	 @curam_pull = Nokogiri::XML(curam_pull.to_s).to_xml 
 	erb :curam_pull		
  end
+
+get '/docs' do
+	redirect 'doc/index.html' 
+end
 
 
 end

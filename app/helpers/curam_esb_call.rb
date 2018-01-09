@@ -3,6 +3,7 @@ gem 'savon', '=2.11.2'
 require 'savon'
 require 'nokogiri'
 require './config/secret.rb'
+require "./app/notifications/slack_notifier.rb"
 
 $CURAM_LOG = Logger.new('./log/curam.log', 'monthly')
 
@@ -17,6 +18,8 @@ savon_config = {
   :ssl_version => :TLSv1,
   :namespaces => ESB_SERVICE_NAMESPACE,
   :log => true,
+  :open_timeout => 100,
+  :read_timeout => 100,
   :logger => $CURAM_LOG,
   :wsse_auth => CURAM_ESB_SOAP[:usercredentials]
 #   ssl_cert_file: "/home/arbitrage/esb_certs/esb_root.pem",
@@ -28,21 +31,15 @@ client = Savon.client(savon_config)
 #The name space is changing boy be careful ex: ns1 , v1, WL5G3N3
 message = { "WL5G3N3:ICIDParameters" => { "WL5G3N3:IntegratedCasereference_ID" => "#{ic.to_s}" } }
 
-response = client.call(:process, message: message)
-
-$CURAM_LOG.info("XML recieved from curam for IC:#{ic}\n#{Nokogiri::XML(response.xml.to_s).to_xml}")
-
-response.xml
-end	
-
-
-# def self.haven(ic)
-# 	payload = {"icNumber" => "#{ic.to_s}"}.to_s.gsub("=>", ":")
-# 	res = RestClient.post('newsafehaven.dcmic.org/enroll_app_system_wrapper.php', payload, {content_type: :"application/xml", accept: :"application/json"})
-#     #puts res.body.class
-#     doc = Nokogiri::XML res
-#     doc.to_xml
-# end
+begin 
+	response = client.call(:process, message: message)
+rescue 
+	Slack_it.new.notify("IC:#{ic}  No data from curam (500/Timeout/No data). <@mamatha.burujukati>, <@rahulch>, <@venumadhav> :trumpet:")
+else
+	$CURAM_LOG.info("XML received from curam for IC:#{ic}\n#{Nokogiri::XML(response.xml.to_s).to_xml}")
+	response.xml
+end #begin end
+end	#method end
 
 end
 

@@ -40,7 +40,8 @@ record = @xlate.select {|rec| (rec.sourcetype == "#{sourcetype.join(".")}" and r
 
 		elsif record.first.siflag == "N"
 			#rec = @xlate.where(["sourcetype=? and sourcefield=? and sourcevalue=?", "#{sourcetype.join(".")}", "#{sourcefield}", "#{strip_tag_value(faa.content)}"])
-			rec = @xlate.select {|rec| (rec.sourcetype == "#{sourcetype.join(".")}" and rec.sourcefield == "#{sourcefield}" and rec.sourcevalue == "#{strip_tag_value(faa.content)}")}
+			sourcevalue = strip_tag_value(faa.content)
+			rec = @xlate.select {|rec| (rec.sourcetype == "#{sourcetype.join(".")}" and rec.sourcefield == "#{sourcefield}" and rec.sourcevalue == ((sourcevalue != "") ? sourcevalue : "default"))}
 			rec_group = rec.group_by(&:targetfield)
 
 			rec_group.keys.each do |key|
@@ -53,8 +54,12 @@ record = @xlate.select {|rec| (rec.sourcetype == "#{sourcetype.join(".")}" and r
 			# else
 			# 	recx_targetvalue = recx.targetvalue
 			# end
-
-			@sv[recx.targetfield] = strip_tag_value(recx.targetvalue)
+			case recx.targetvalue
+			when "default"
+				@sv[recx.targetfield] = recx.defaultvalue
+			else
+				@sv[recx.targetfield] = recx.targetvalue
+			end
 			#sv << recx.targetvalue #unless recx.empty?
 			puts "Source value from siflag N:#{@sv}"
 		    end
@@ -114,6 +119,8 @@ end
 def strip_tag_value(value)
 	if value.include?("#")
 		stripped_value = value.split("#")[-1]
+	# elsif value == ""
+	# 	stripped_value = "default"
 	else
 		stripped_value = value
 	end
@@ -516,7 +523,7 @@ $EA_LOG.info("***********************\n\nThe Holy moly Big Array:\n #{arr.inspec
 
 
 
-
+@tablename_array.insert(0, "finapp_header")  #for storing EA headers in finapp_header table
 @tablename_array.each do |tn|
 
 @table_arr = arr.select do |value|
@@ -544,19 +551,22 @@ end # translate_ea_to_haven method end
 def add_headers_to_finapp_in
 #[finapp_id, tablename, person_id, id, type, tbd, key, value]
 
-#sample properties data properties = {:content_type=>"application/octet-stream", :headers=>{"submitted_timestamp"=>"2017-07-13 14:57:09 -0400", "correlation_id"=>"22236845cc70442fa0039c5b20c23c28", "family_id"=>"5967bebed7c2dc110200000a", "application_id"=>"5967beddd7c2dc0bd1000000"}, :delivery_mode=>2, :priority=>0, :correlation_id=>"22236845cc70442fa0039c5b20c23c28", :timestamp=>"2017-07-13 14:57:09 -0400", :app_id=>"enroll"}
-
+#sample properties data properties = {:content_type=>"application/octet-stream", :headers=>{"submitted_timestamp"=>2017-12-05 12:23:53 -0500, "correlation_id"=>"2916bf7f06ca4be1af85b790c7aba446", "family_id"=>"5a26d52d6012e43d6500000a", "assistance_application_id"=>"5a26d5816012e43d5f000000"}, :delivery_mode=>2, :priority=>0, :correlation_id=>"2916bf7f06ca4be1af85b790c7aba446", :timestamp=>2017-12-05 12:23:53 -0500, :app_id=>"enroll"}
 #*********Note: please confirm naming conventions of keys
-headers_mapping = { "correlation_id" => "correlationid", "family_id" => "familyid", "primary_applicant_id" => "primaryapplicantid", "havenic_id" => "havenicid", "ecase_id" => "ecaseid"}
+headers_mapping = { "submitted_timestamp" => "submittedtimestamp", "assistance_application_id" => "assistanceapplicationid", "correlation_id" => "correlationid", "family_id" => "familyid", "primary_applicant_id" => "primaryapplicantid", "havenic_id" => "havenicid", "ecase_id" => "ecaseid", "haven_application_id" => "havenapplicationid"}
 
 @headers = @properties[:headers]	
 finapp_in_headers = []
 headers_mapping.each do |key, value|
 	if @properties.keys.include?(key) || @headers.keys.include?(key)
 	result = @properties[key] || @headers[key]
+
 	finapp_in_headers << [@faa_id, "finapp_in", nil, nil, nil, nil, value, result]	
+	finapp_in_headers << [@faa_id, "finapp_header", nil, nil, nil, nil, value, result]
 	end #if end
 end #do end
+finapp_in_headers.delete_if {|arr| arr[-2] == "submittedtimestamp" && arr[1] == "finapp_in"}
+finapp_in_headers.each {|y| y[-2] = "applid" if (y[-2] == "havenapplicationid" && y[1] == "finapp_in")}
 return finapp_in_headers
 end #add_headers_to_finapp_in  end
 
