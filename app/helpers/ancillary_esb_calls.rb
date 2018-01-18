@@ -21,7 +21,7 @@ def initialize(*arg)
 }
 @client = Savon.client(savon_config)
 @ic = arg[0]
-#@client.operations => [:curam_user_look_up, :five_year_bar, :income_pull, :deductions, :tax_dependents, :filer_consent]
+#@client.operations => [:curam_user_look_up, :five_year_bar, :income_pull, :deductions, :tax_dependents, :filer_consent, :is_resident, :insurance, :pregnancy, :foster_care]
 @payload_header = %Q{<soapenv:Header>
       <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
          <wsse:UsernameToken wsu:Id="UsernameToken-E7F1EEEE943B258D3215089397579941">
@@ -172,6 +172,40 @@ $LOG.info(insurance_block.to_xml)
 insurance_block
 end
 
+
+def pregnancy(concern_role_id)
+   payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="https://openhbx.gov/haven/Pregnancydetails/request">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <req:PregnancydetailsInput>
+         <req:I_CONCERNROLEID>#{concern_role_id}</req:I_CONCERNROLEID>
+      </req:PregnancydetailsInput>
+   </soapenv:Body>
+</soapenv:Envelope>}
+
+response = @client.call(:pregnancy, xml: payload)
+pregnancy_block = Nokogiri::XML(response.xml).remove_namespaces!
+haven_ext_log("concern_role_id", concern_role_id, "Pregnancy", response)
+$LOG.info(pregnancy_block.to_xml)
+(pregnancy_block.xpath("//pregnancy").count == 2) ? pregnancy_block.xpath("//pregnancy")[1].children.to_s : ""
+end
+
+def foster_care(concern_role_id)
+   payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="https://openhbx.gov/haven/Fostercaredetails/request">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <req:FostercareInput>
+         <req:I_CONCERNROLEID>#{concern_role_id}</req:I_CONCERNROLEID>
+      </req:FostercareInput>
+   </soapenv:Body>
+</soapenv:Envelope>}
+
+response = @client.call(:foster_care, xml: payload)
+foster_care_block = Nokogiri::XML(response.xml).remove_namespaces!
+haven_ext_log("concern_role_id", concern_role_id, "Foster_Care", response)
+$LOG.info(foster_care_block.to_xml)
+(foster_care_block.xpath("//fostercare").count == 2) ? foster_care_block.xpath("//fostercare")[1].children.to_s : ""
+end
 
 def haven_ext_log(keyindex, keyvalue, keytype, payload)
 payload = {

@@ -553,20 +553,34 @@ def add_headers_to_finapp_in
 
 #sample properties data properties = {:content_type=>"application/octet-stream", :headers=>{"submitted_timestamp"=>2017-12-05 12:23:53 -0500, "correlation_id"=>"2916bf7f06ca4be1af85b790c7aba446", "family_id"=>"5a26d52d6012e43d6500000a", "assistance_application_id"=>"5a26d5816012e43d5f000000"}, :delivery_mode=>2, :priority=>0, :correlation_id=>"2916bf7f06ca4be1af85b790c7aba446", :timestamp=>2017-12-05 12:23:53 -0500, :app_id=>"enroll"}
 #*********Note: please confirm naming conventions of keys
-headers_mapping = { "submitted_timestamp" => "submittedtimestamp", "assistance_application_id" => "assistanceapplicationid", "correlation_id" => "correlationid", "family_id" => "familyid", "primary_applicant_id" => "primaryapplicantid", "havenic_id" => "havenicid", "ecase_id" => "ecaseid", "haven_application_id" => "havenapplicationid"}
+finapp_header_rabbit_header = Application_xlate.where(["sourcein=? and targetout=? and status=? and sourcetype=? and targettype=?", "ea", "haven", "A", "faa_headers", "finapp_header"]).to_a
+finapp_in_rabbit_header = Application_xlate.where(["sourcein=? and targetout=? and status=? and sourcetype=? and targettype=?", "ea", "haven", "A", "faa_headers", "finapp_in"]).to_a
+
+finapp_header_table_mapping ={}
+finapp_in_table_mapping ={}
+
+finapp_header_rabbit_header.each {|rec| finapp_header_table_mapping[rec.sourcefield]=rec.targetfield}
+finapp_in_rabbit_header.each {|rec| finapp_in_table_mapping[rec.sourcefield]=rec.targetfield}
+
+#headers_mapping = { "submitted_timestamp" => "submittedtimestamp", "assistance_application_id" => "assistanceapplicationid", "correlation_id" => "correlationid", "family_id" => "familyid", "primary_applicant_id" => "primaryapplicantid", "havenic_id" => "havenicid", "ecase_id" => "ecaseid", "haven_application_id" => "havenapplicationid"}
 
 @headers = @properties[:headers]	
 finapp_in_headers = []
-headers_mapping.each do |key, value|
+
+finapp_header_table_mapping.each do |key, value|
 	if @properties.keys.include?(key) || @headers.keys.include?(key)
 	result = @properties[key] || @headers[key]
-
-	finapp_in_headers << [@faa_id, "finapp_in", nil, nil, nil, nil, value, result]	
 	finapp_in_headers << [@faa_id, "finapp_header", nil, nil, nil, nil, value, result]
 	end #if end
 end #do end
-finapp_in_headers.delete_if {|arr| arr[-2] == "submittedtimestamp" && arr[1] == "finapp_in"}
-finapp_in_headers.each {|y| y[-2] = "applid" if (y[-2] == "havenapplicationid" && y[1] == "finapp_in")}
+
+finapp_in_table_mapping.each do |key, value|
+	if @properties.keys.include?(key) || @headers.keys.include?(key)
+	result = @properties[key] || @headers[key]
+	finapp_in_headers << [@faa_id, "finapp_in", nil, nil, nil, nil, value, result]	
+	end #if end
+end #do end
+
 return finapp_in_headers
 end #add_headers_to_finapp_in  end
 

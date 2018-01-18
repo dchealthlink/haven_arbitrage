@@ -293,10 +293,15 @@ end
 @ancillary_esb_calls = Ancillary_ESB_Calls.new(@integrated_case_reference)
 @five_year_bar = @ancillary_esb_calls.five_year_bar(@concern_role_id)
 @filer_consent = @ancillary_esb_calls.filer_consent(@integrated_case_reference)
-@is_resident =   @ancillary_esb_calls.is_resident(@concern_role_id)  
+@is_resident   = @ancillary_esb_calls.is_resident(@concern_role_id) 
+@pregnancy     = @ancillary_esb_calls.pregnancy(@concern_role_id)  
+@foster_care   = @ancillary_esb_calls.foster_care(@concern_role_id)
 
+
+applicant.add_child(@foster_care)
 applicant.add_child(@five_year_bar)
 applicant.add_child(@filer_consent)
+applicant.add_child(@pregnancy)
 applicant.search("is_resident").first.children=@is_resident
 
 
