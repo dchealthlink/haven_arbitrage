@@ -21,7 +21,7 @@ def initialize(*arg)
 }
 @client = Savon.client(savon_config)
 @ic = arg[0]
-#@client.operations => [:curam_user_look_up, :five_year_bar, :income_pull, :deductions, :tax_dependents, :filer_consent, :is_resident, :insurance, :pregnancy, :foster_care]
+#@client.operations => [:curam_user_look_up, :five_year_bar, :income_pull, :deductions, :tax_dependents, :filer_consent, :is_resident, :insurance, :pregnancy, :foster_care, :disability_details]
 @payload_header = %Q{<soapenv:Header>
       <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
          <wsse:UsernameToken wsu:Id="UsernameToken-E7F1EEEE943B258D3215089397579941">
@@ -175,7 +175,7 @@ end
 
 def pregnancy(concern_role_id)
    payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="https://openhbx.gov/haven/Pregnancydetails/request">
-   <soapenv:Header/>
+   #{@payload_header}
    <soapenv:Body>
       <req:PregnancydetailsInput>
          <req:I_CONCERNROLEID>#{concern_role_id}</req:I_CONCERNROLEID>
@@ -192,7 +192,7 @@ end
 
 def foster_care(concern_role_id)
    payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="https://openhbx.gov/haven/Fostercaredetails/request">
-   <soapenv:Header/>
+   #{@payload_header}
    <soapenv:Body>
       <req:FostercareInput>
          <req:I_CONCERNROLEID>#{concern_role_id}</req:I_CONCERNROLEID>
@@ -206,6 +206,23 @@ haven_ext_log("concern_role_id", concern_role_id, "Foster_Care", response)
 $LOG.info(foster_care_block.to_xml)
 (foster_care_block.xpath("//fostercare").count == 2) ? foster_care_block.xpath("//fostercare")[1].children.to_s : ""
 end
+
+def disability(concern_role_id)
+payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="https://openhbx.gov/haven/Fostercaredetails/request">
+   #{@payload_header}
+   <soapenv:Body>
+      <req:DisabilitydetailsInput>
+         <req:I_CONCERNROLEID>#{concern_role_id}</req:I_CONCERNROLEID>
+      </req:DisabilitydetailsInput>
+   </soapenv:Body>
+</soapenv:Envelope>}
+response = @client.call(:disability_details, xml: payload)
+disability_block = Nokogiri::XML(response.xml).remove_namespaces!
+haven_ext_log("concern_role_id", concern_role_id, "Disability", response)
+$LOG.info(disability_block.to_xml)
+(disability_block.search("disability").count >= 1) ? disability_block.search("disability") : ""
+end
+
 
 def haven_ext_log(keyindex, keyvalue, keytype, payload)
 payload = {
