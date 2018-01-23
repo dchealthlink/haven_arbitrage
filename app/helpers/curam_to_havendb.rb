@@ -296,12 +296,14 @@ end
 @is_resident   = @ancillary_esb_calls.is_resident(@concern_role_id) 
 @pregnancy     = @ancillary_esb_calls.pregnancy(@concern_role_id)  
 @foster_care   = @ancillary_esb_calls.foster_care(@concern_role_id)
+@disability    = @ancillary_esb_calls.disability(@concern_role_id)
 
 
 applicant.add_child(@foster_care)
 applicant.add_child(@five_year_bar)
 applicant.add_child(@filer_consent)
 applicant.add_child(@pregnancy)
+applicant.add_child(@disability)
 applicant.search("is_resident").first.children=@is_resident
 
 

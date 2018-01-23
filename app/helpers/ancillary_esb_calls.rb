@@ -208,7 +208,7 @@ $LOG.info(foster_care_block.to_xml)
 end
 
 def disability(concern_role_id)
-payload = %Q{<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="https://openhbx.gov/haven/Fostercaredetails/request">
+payload = %Q{<soapenv:Envelope xmlns:req="https://openhbx.gov/haven/Disabilitydetails/request" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
    #{@payload_header}
    <soapenv:Body>
       <req:DisabilitydetailsInput>
@@ -220,7 +220,7 @@ response = @client.call(:disability_details, xml: payload)
 disability_block = Nokogiri::XML(response.xml).remove_namespaces!
 haven_ext_log("concern_role_id", concern_role_id, "Disability", response)
 $LOG.info(disability_block.to_xml)
-(disability_block.search("disability").count >= 1) ? disability_block.search("disability") : ""
+(disability_block.search("ResponseCode").text == "DATA_FOUND") ? "<isdisabled>Y</isdisabled>" : "<isdisabled>N</isdisabled>"
 end
 
 
@@ -259,6 +259,6 @@ end #class end
 # puts "value:#{Ancillary_ESB_Calls.new(2217363).deductions(2929548264334163968)}"
 #puts "value:#{Ancillary_ESB_Calls.new(4218400).filer_consent(4218400)}"
 #puts "value:#{Ancillary_ESB_Calls.new(3570910).is_resident(-8102400690883657728)}"
-
+#puts "value: #{Ancillary_ESB_Calls.new().pregnancy(72359644484966809)}"
 
 
